@@ -1,11 +1,12 @@
-import { NavigationProp } from "@react-navigation/core";
-import React from "react";
-import { Text } from "react-native";
-import { StyleSheet, View } from "react-native";
-import { Bottombar } from "./Bottombar/Bottombar";
-import { MessageList } from "./MessageList/MessageList";
-import { RoomTopbar } from "./RoomTopbar/RoomTopbar";
-import { useRoom } from "./useRoom";
+import React from 'react';
+import { NavigationProp } from '@react-navigation/core';
+import { Text } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Bottombar } from './Bottombar/Bottombar';
+import { MessageList } from './MessageList/MessageList';
+import { RoomTopbar } from './RoomTopbar/RoomTopbar';
+import { useRoom } from './useRoom';
+import { RoomPresenceList } from './RoomPresenceList/RoomPresenceList';
 
 interface IProps {
     roomId: number;
@@ -13,8 +14,7 @@ interface IProps {
 }
 
 export const Room = ({ roomId, navigation }: IProps) => {
-    const { isInvalid, name, messages, users, is_group, status } =
-        useRoom(roomId);
+    const { isInvalid, name, messages, users, is_group, status, roomPresences } = useRoom(roomId);
 
     if (isInvalid) {
         return (
@@ -33,9 +33,9 @@ export const Room = ({ roomId, navigation }: IProps) => {
                 status={status}
                 navigation={navigation}
             />
-            {messages ? (
-                <MessageList roomId={roomId} messages={messages} />
-            ) : null}
+            {messages ? <MessageList roomId={roomId} messages={messages} /> : null}
+
+            {roomPresences ? <RoomPresenceList roomId={roomId} roomPresences={roomPresences} /> : null}
 
             <Bottombar roomId={roomId} users={users} />
         </View>
@@ -44,6 +44,6 @@ export const Room = ({ roomId, navigation }: IProps) => {
 
 const styles = StyleSheet.create({
     container: {
-        height: "100%",
+        height: '100%',
     },
 });

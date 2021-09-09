@@ -7,6 +7,8 @@ import {
     addMessage,
     initRoom,
     readMessages,
+    userJoined,
+    userLeft,
 } from "../../../app/redux/rooms/roomsActions";
 import { singleRoomSelector } from "../../../app/redux/rooms/selectors/singleRoomSelector";
 import { getRoomDetailsThunk } from "../../../app/redux/rooms/thunks/getRoomDetailsThunk";
@@ -15,6 +17,7 @@ import { RootState } from "../../../app/redux/store";
 import { readMessagesReq } from "../../../app/repository/message/readMessagesReq";
 import { getToken } from "../../../app/repository/storage/getToken";
 import { IMessage } from "../../../app/types/IMessage";
+import { IRoomPresence } from "../../../app/types/IRoomPresence";
 import { useRoomActivityStatus } from "./useRoomActivityStatus";
 
 export const useRoom = (roomId: number) => {
@@ -27,6 +30,7 @@ export const useRoom = (roomId: number) => {
         messagesPageNumber,
         messagesHasNext,
         is_group,
+        roomPresences
     } = useSelector((state: RootState) => {
         return singleRoomSelector(state, roomId);
     });
@@ -50,14 +54,6 @@ export const useRoom = (roomId: number) => {
             },
         });
 
-        socket.on("connect", () => {
-            console.log("room connected!");
-        });
-
-        socket.on("disconnect", () => {
-            console.log("room disconnected :(");
-        });
-
         socket.on("message", (message: IMessage) => {
             if (message.sender_id === user?.id) return;
 
@@ -74,6 +70,26 @@ export const useRoom = (roomId: number) => {
                     readerId: data.reader_id,
                 })
             );
+        });
+
+        socket.on("user-joined", (data: IRoomPresence) => {
+            if (data.userId === user?.id) return;
+
+            // console.log(`${user?.id} of room-${roomId} got notified`, data);
+            dispatch(userJoined({
+                roomId: roomId,
+                roomPresence: data
+            }));
+        });
+
+        socket.on("user-left", (data: IRoomPresence) => {
+            if (data.userId === user?.id) return;
+
+            // console.log(`${user?.id} of room-${roomId} got notified`, data);
+            dispatch(userLeft({
+                roomId: roomId,
+                roomPresence: data
+            }));
         });
 
         return () => {
@@ -132,5 +148,6 @@ export const useRoom = (roomId: number) => {
         messages,
         is_group,
         status,
+        roomPresences
     };
 };

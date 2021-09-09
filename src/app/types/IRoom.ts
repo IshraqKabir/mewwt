@@ -1,4 +1,5 @@
 import { IMessage } from "./IMessage";
+import { IRoomPresence } from "./IRoomPresence";
 import { IUser } from "./IUser";
 
 export interface IRoom {
@@ -10,4 +11,5 @@ export interface IRoom {
     messagesPageNumber?: number;
     messagesHasNext?: boolean;
     isFetchingNewMessages?: boolean;
+    roomPresences: IRoomPresence[];
 }

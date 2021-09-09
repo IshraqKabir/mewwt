@@ -6,4 +6,6 @@ export const {
     incrementPage,
     readMessages,
     setUnreadMessagesCount,
+    userJoined,
+    userLeft
 } = roomsSlice.actions;

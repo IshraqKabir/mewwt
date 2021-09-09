@@ -67,17 +67,17 @@ export const MessageList = ({ messages, roomId }: IProps) => {
                                 index === 0
                                     ? false
                                     : messageHasPrevFromSameSender(
-                                          message,
-                                          messages[index - 1]
-                                      )
+                                        message,
+                                        messages[index - 1]
+                                    )
                             }
                             hasNextFromSameSender={
                                 index === messagesLength - 1
                                     ? false
                                     : messageHasNextFromSameSender(
-                                          message,
-                                          messages[index + 1]
-                                      )
+                                        message,
+                                        messages[index + 1]
+                                    )
                             }
                             showSenderName={showSenderName}
                         />

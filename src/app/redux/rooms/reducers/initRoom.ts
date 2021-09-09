@@ -8,5 +8,10 @@ export const initRoom = (state: IRoomsState, action: PayloadAction<number>) => {
         messagesPageNumber: 1,
         messagesHasNext: true,
         isFetchingNewMessages: false,
+        roomPresences: [],
+        is_group: false,
+        messages: [],
+        name: "",
+        users: []
     } as IRoom);
 };
