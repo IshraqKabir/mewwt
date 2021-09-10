@@ -11,7 +11,7 @@ export const useMessage = (roomId: number, roomSocket: Socket | null, roomUsers:
         roomSocket?.emit("user-started-typing", { userIds: pluck(roomUsers, "id") });
     }, () => {
         roomSocket?.emit("user-stopped-typing", { userIds: pluck(roomUsers, "id") });
-    }, 1000);
+    }, 500);
 
     const dispatch = useDispatch();
 

@@ -19,7 +19,8 @@ export const roomChipRead = (
 
         return {
             ...rc,
-            is_read: rc.is_group ? authUserId !== reader_id : true,
+            is_read: rc.sender_id === authUserId ? true
+                : reader_id === authUserId
         };
     });
 };
