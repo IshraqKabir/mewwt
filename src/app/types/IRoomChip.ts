@@ -12,5 +12,7 @@ export interface IRoomChip {
     message_created_at: string;
     is_read: boolean;
     is_group: boolean;
-    users: IUser[];
+    users: (IUser & {
+        isTyping: boolean;
+    })[];
 }

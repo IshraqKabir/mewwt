@@ -21,6 +21,8 @@ import { getToken } from "../../../app/repository/storage/getToken";
 import { IMessage } from "../../../app/types/IMessage";
 import { IRoomPresence } from "../../../app/types/IRoomPresence";
 import { useRoomActivityStatus } from "./useRoomActivityStatus";
+import { userStartedTyping as roomChipUserStartedTyping } from "../../../app/redux/chatList/chatListActions";
+import { userStoppedTyping as roomChipUserStoppedTyping } from "../../../app/redux/chatList/chatListActions";
 
 export const useRoom = (roomId: number) => {
     const dispatch = useDispatch();
@@ -93,10 +95,14 @@ export const useRoom = (roomId: number) => {
         });
 
         socket.on("user-started-typing", ({ userId }: { userId: number; }) => {
+            if (userId === user?.id) return;
+
             dispatch(userStartedTyping({ userId: userId, roomId: roomId }));
         });
 
         socket.on("user-stopped-typing", ({ userId }: { userId: number; }) => {
+            if (userId === user?.id) return;
+
             dispatch(userStoppedTyping({ userId: userId, roomId: roomId }));
         });
 

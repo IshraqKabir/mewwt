@@ -9,6 +9,8 @@ import { authSelector } from "../../../redux/auth/selectors/authSelector";
 import {
     newRoomChip,
     roomChipRead,
+    userStartedTyping,
+    userStoppedTyping,
 } from "../../../redux/chatList/chatListActions";
 import { getToken } from "../../../repository/storage/getToken";
 import { IRoomChip } from "../../../types/IRoomChip";
@@ -59,14 +61,24 @@ export const useUserSocket = () => {
             );
         });
 
-        socket.on("login", (data: { userId: number; socketIds: string[] }) => {
+        socket.on("login", (data: { userId: number; socketIds: string[]; }) => {
             // console.log(`${user.id} got notification login`, data);
             dispatch(chatMateLogin(data));
         });
 
-        socket.on("logout", (data: { userId: number; socketIds: string[] }) => {
+        socket.on("logout", (data: { userId: number; socketIds: string[]; }) => {
             // console.log(`${user.id} got notification logout`, data);
             dispatch(chatMateLogout(data));
+        });
+
+        socket.on("user-started-typing", ({ userId, roomId }: { userId: number, roomId: number; }) => {
+            // console.log("user-started-typing", data);
+            dispatch(userStartedTyping({ roomId: roomId, userId: userId }));
+        });
+
+        socket.on("user-stopped-typing", ({ userId, roomId }: { userId: number, roomId: number; }) => {
+            // console.log("user-stopped-typing", data);
+            dispatch(userStoppedTyping({ roomId: roomId, userId: userId }));
         });
 
         return () => {

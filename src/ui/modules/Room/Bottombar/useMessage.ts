@@ -3,16 +3,15 @@ import { Socket } from "socket.io-client";
 import { useDebounce } from "../../../../app/customHooks/useDebounce";
 import { sendMessageThunk } from "../../../../app/redux/rooms/thunks/sendMessageThunk";
 import { IMessage } from "../../../../app/types/IMessage";
+import { IUser } from "../../../../app/types/IUser";
+import { pluck } from "../../../../app/utils/pluck";
 
-export const useMessage = (roomId: number, roomSocket: Socket | null) => {
-    // const [text, setText] = useState("");
+export const useMessage = (roomId: number, roomSocket: Socket | null, roomUsers: IUser[]) => {
     const { value: text, setValue: setText } = useDebounce<string>("", () => {
-        roomSocket?.emit("user-started-typing");
+        roomSocket?.emit("user-started-typing", { userIds: pluck(roomUsers, "id") });
     }, () => {
-        roomSocket?.emit("user-stopped-typing");
+        roomSocket?.emit("user-stopped-typing", { userIds: pluck(roomUsers, "id") });
     }, 1000);
-    // const [isUserTyping, setIsUserTyping] = useState(false);
-    // const [prevTimeout, setPrevTimeOut] = useState<NodeJS.Timeout | null>(null);
 
     const dispatch = useDispatch();
 
@@ -29,20 +28,6 @@ export const useMessage = (roomId: number, roomSocket: Socket | null) => {
 
     const handleTextChange = (text: string) => {
         setText(text);
-        // if (!isUserTyping) {
-        //     roomSocket?.emit("user-started-typing");
-        // }
-
-        // setIsUserTyping(true);
-
-        // const timeout = setTimeout(() => {
-        //     roomSocket?.emit("user-stopped-typing");
-        //     setIsUserTyping(false);
-        // }, 1000);
-
-        // if (prevTimeout) clearTimeout(prevTimeout);
-
-        // setPrevTimeOut(timeout);
     };
 
     return {

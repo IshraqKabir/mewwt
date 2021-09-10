@@ -1,14 +1,15 @@
 import React from "react";
-import { StyleSheet, Image, View, Text, Pressable } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { IChatMate } from "../../../app/types/IChatMate";
 import { IRoomChip } from "../../../app/types/IRoomChip";
+import { IUser } from "../../../app/types/IUser";
 import { capitalizeFirstLetter } from "../../../app/utils/capitalizeFirstLetter";
+import { getIsRoomChipRead } from "../../../app/utils/getIsRoomChipRead";
+import { isRoomChipActive } from "../../../app/utils/isRoomChipActive";
 import { SeenIcon } from "../../../assets/icons/SeenIcon/SeenIcon";
 import { SentIcon } from "../../../assets/icons/SentIcon/SentIcon";
 import { DP_WIDTH } from "../../../consts";
 import { useTime } from "../../customHooks/useTime";
-import { getIsRoomChipRead } from "../../../app/utils/getIsRoomChipRead";
-import { IChatMate } from "../../../app/types/IChatMate";
-import { isRoomChipActive } from "../../../app/utils/isRoomChipActive";
 
 const DP = require("../../../assets/images/default_dp.jpg");
 
@@ -28,6 +29,18 @@ export const RoomChip = ({
     const { time } = useTime(roomChip.message_created_at);
 
     const isActive = isRoomChipActive(roomChip, chatMates, authUserId ?? 0);
+
+    const typingUsers = getTypingUsers(roomChip.users);
+
+    const message = getMessageText(roomChip.message_text, typingUsers, roomChip.is_group);
+
+    const messageColor = getIsRoomChipRead(roomChip, authUserId)
+        ? "gray"
+        : "black";
+
+    const messageFont = getIsRoomChipRead(roomChip, authUserId)
+        ? "normal"
+        : "bold";
 
     return (
         <Pressable
@@ -49,27 +62,29 @@ export const RoomChip = ({
                 <Text
                     style={{
                         ...styles.messageText,
-                        color: getIsRoomChipRead(roomChip, authUserId)
-                            ? "gray"
-                            : "black",
-                        fontWeight: getIsRoomChipRead(roomChip, authUserId)
-                            ? "normal"
-                            : "bold",
+                        color: messageColor,
+                        fontWeight: messageFont,
                     }}
                     numberOfLines={1}
                 >
-                    {roomChip.sender_id === authUserId
-                        ? "You: "
-                        : roomChip.is_group
-                        ? roomChip.sender_first_name
-                            ? `${capitalizeFirstLetter(
-                                  roomChip.sender_first_name
-                              )}: `
-                            : ""
-                        : ""}
-                    {`${roomChip.message_text.slice(0, 10)}${
-                        roomChip.message_text?.length > 10 ? "..." : ""
-                    }`}
+                    {typingUsers.length === 0 ?
+                        <Text>
+                            {roomChip.sender_id === authUserId
+                                ? "You: "
+                                : roomChip.is_group
+                                    ? roomChip.sender_first_name
+                                        ? `${capitalizeFirstLetter(
+                                            roomChip.sender_first_name
+                                        )}: `
+                                        : ""
+                                    : ""}
+                        </Text>
+                        : null}
+
+                    <Text style={{ color: typingUsers.length > 0 ? "green" : messageColor, fontWeight: messageFont }}>
+                        {`${message.slice(0, 20)}${message.length > 20 ? "..." : ""
+                            }`}
+                    </Text>
                     {roomChip.message_created_at && `  .  ${time}`}
                 </Text>
             </View>
@@ -118,3 +133,15 @@ const styles = StyleSheet.create({
     },
     messageText: {},
 });
+
+const getTypingUsers = (users: (IUser & { isTyping: boolean; })[]) => {
+    return users.filter(user => user.isTyping);
+};
+
+const getMessageText = (message: string, typingUsers: (IUser & { isTyping: boolean; })[], is_group: boolean) => {
+    return typingUsers.length > 0 ?
+        typingUsers[0] ?
+            `${is_group ? `${capitalizeFirstLetter(typingUsers[0].first_name)} is typing...` : "typing..."}`
+            : message
+        : message;
+};
