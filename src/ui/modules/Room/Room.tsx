@@ -14,7 +14,7 @@ interface IProps {
 }
 
 export const Room = ({ roomId, navigation }: IProps) => {
-    const { isInvalid, name, messages, users, is_group, status, roomPresences } = useRoom(roomId);
+    const { isInvalid, name, messages, users, is_group, status, roomPresences, roomSocket } = useRoom(roomId);
 
     if (isInvalid) {
         return (
@@ -37,7 +37,7 @@ export const Room = ({ roomId, navigation }: IProps) => {
 
             {roomPresences ? <RoomPresenceList roomId={roomId} roomPresences={roomPresences} /> : null}
 
-            <Bottombar roomId={roomId} users={users} />
+            <Bottombar roomId={roomId} users={users} roomSocket={roomSocket} />
         </View>
     );
 };

@@ -7,5 +7,7 @@ export const {
     readMessages,
     setUnreadMessagesCount,
     userJoined,
-    userLeft
+    userLeft,
+    userStartedTyping,
+    userStoppedTyping,
 } = roomsSlice.actions;

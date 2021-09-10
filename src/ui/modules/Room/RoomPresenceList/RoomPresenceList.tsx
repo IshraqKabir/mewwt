@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { authSelector } from "../../../../app/redux/auth/selectors/authSelector";
 import { singleRoomSelector } from "../../../../app/redux/rooms/selectors/singleRoomSelector";
 import { RootState } from "../../../../app/redux/store";
@@ -21,8 +21,6 @@ export const RoomPresenceList = ({ roomPresences, roomId }: IProps) => {
         }
     );
 
-    const dispatch = useDispatch();
-
     return (
         <View style={styles.container}>
             <FlatList
@@ -32,7 +30,7 @@ export const RoomPresenceList = ({ roomPresences, roomId }: IProps) => {
                     const user = roomUsers?.find(roomUser => roomUser.id === roomPresence.userId);
 
                     return (
-                        <Text>{user?.first_name}</Text>
+                        <Text>{user?.first_name}{roomPresence.isTyping ? " : typing" : ""}</Text>
                     );
                 }}
             />

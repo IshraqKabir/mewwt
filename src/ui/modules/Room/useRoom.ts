@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import { BACKEND_URL } from "../../../../config/envs";
 import { authSelector } from "../../../app/redux/auth/selectors/authSelector";
 import {
@@ -9,6 +9,8 @@ import {
     readMessages,
     userJoined,
     userLeft,
+    userStartedTyping,
+    userStoppedTyping,
 } from "../../../app/redux/rooms/roomsActions";
 import { singleRoomSelector } from "../../../app/redux/rooms/selectors/singleRoomSelector";
 import { getRoomDetailsThunk } from "../../../app/redux/rooms/thunks/getRoomDetailsThunk";
@@ -42,6 +44,8 @@ export const useRoom = (roomId: number) => {
         chatMates
     );
 
+    const [roomSocket, setRoomSocket] = useState<Socket | null>(null);
+
     useEffect(() => {
         const socket = io(`${BACKEND_URL}/room`, {
             auth: async (cb) => {
@@ -53,6 +57,8 @@ export const useRoom = (roomId: number) => {
                 });
             },
         });
+
+        setRoomSocket(socket);
 
         socket.on("message", (message: IMessage) => {
             if (message.sender_id === user?.id) return;
@@ -73,9 +79,6 @@ export const useRoom = (roomId: number) => {
         });
 
         socket.on("user-joined", (data: IRoomPresence) => {
-            if (data.userId === user?.id) return;
-
-            // console.log(`${user?.id} of room-${roomId} got notified`, data);
             dispatch(userJoined({
                 roomId: roomId,
                 roomPresence: data
@@ -83,17 +86,23 @@ export const useRoom = (roomId: number) => {
         });
 
         socket.on("user-left", (data: IRoomPresence) => {
-            if (data.userId === user?.id) return;
-
-            // console.log(`${user?.id} of room-${roomId} got notified`, data);
             dispatch(userLeft({
                 roomId: roomId,
                 roomPresence: data
             }));
         });
 
+        socket.on("user-started-typing", ({ userId }: { userId: number; }) => {
+            dispatch(userStartedTyping({ userId: userId, roomId: roomId }));
+        });
+
+        socket.on("user-stopped-typing", ({ userId }: { userId: number; }) => {
+            dispatch(userStoppedTyping({ userId: userId, roomId: roomId }));
+        });
+
         return () => {
             socket.disconnect();
+            setRoomSocket(null);
         };
     }, []);
 
@@ -148,6 +157,7 @@ export const useRoom = (roomId: number) => {
         messages,
         is_group,
         status,
-        roomPresences
+        roomPresences,
+        roomSocket
     };
 };

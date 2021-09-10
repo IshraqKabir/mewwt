@@ -5,6 +5,8 @@ import { readMessages } from "./readMessages";
 import { setUnreadMessagesCount } from "./setUnreadMessagesCount";
 import { userJoined } from "./userJoined";
 import { userLeft } from "./userLeft";
+import { userStartedTyping } from "./userStartedTyping";
+import { userStoppedTyping } from "./userStoppedTyping";
 
 export const roomsReducers = {
     initRoom: initRoom,
@@ -14,4 +16,6 @@ export const roomsReducers = {
     setUnreadMessagesCount: setUnreadMessagesCount,
     userJoined: userJoined,
     userLeft: userLeft,
+    userStartedTyping: userStartedTyping,
+    userStoppedTyping: userStoppedTyping
 };

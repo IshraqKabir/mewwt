@@ -1,23 +1,12 @@
-import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useDebounce } from "./useDebounce";
 
 export const useSearch = (search: Function, defaultText = "") => {
-    const [text, setText] = useState(defaultText);
+    const { value: text, setValue: setText } = useDebounce<string>(defaultText, () => { }, () => {
+        dispatch(search(text));
+    }, 500);
+
     const dispatch = useDispatch();
-
-    useEffect(() => {
-        if (!text) {
-            return;
-        }
-
-        const timeout = setTimeout(() => {
-            dispatch(search(text));
-        }, 500);
-
-        return () => {
-            clearTimeout(timeout);
-        };
-    }, [text]);
 
     const handleChange = (text: string) => {
         setText(text);

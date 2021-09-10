@@ -3,38 +3,29 @@ import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { useDispatch } from "react-redux";
+import { Socket } from "socket.io-client";
 import { sendMessageThunk } from "../../../../app/redux/rooms/thunks/sendMessageThunk";
 import { IMessage } from "../../../../app/types/IMessage";
 import { IUser } from "../../../../app/types/IUser";
 import { BACKGROUND_COLOR, BLUE_COLOR, GRAY_COLOR } from "../../../../consts";
 import { SendIcon } from "./SendIcon/SendIcon";
+import { useMessage } from "./useMessage";
 
 interface IProps {
     roomId: number;
     users: IUser[] | undefined;
+    roomSocket: Socket | null;
 }
 
-export const Bottombar = ({ roomId, users }: IProps) => {
-    const [ text, setText ] = useState("");
-    const dispatch = useDispatch();
-
-    const handleSend = async () => {
-        dispatch(sendMessageThunk({
-            roomId,
-            message: {
-                text: text,
-            } as IMessage,
-        }));
-
-        setText("");
-    };
+export const Bottombar = ({ roomId, users, roomSocket }: IProps) => {
+    const { text, handleSend, handleTextChange } = useMessage(roomId, roomSocket);
 
     return <View style={styles.container}>
         <View style={styles.textInputContainer}>
             <TextInput
                 style={styles.textInput}
                 value={text}
-                onChangeText={text => setText(text)}
+                onChangeText={text => handleTextChange(text)}
                 placeholder="Message"
                 placeholderTextColor={GRAY_COLOR}
                 selectionColor={BLUE_COLOR}
