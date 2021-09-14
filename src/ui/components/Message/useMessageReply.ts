@@ -1,24 +1,16 @@
-import { useEffect, useState } from "react";
 import { Dimensions } from "react-native";
 import { PanGestureHandlerGestureEvent } from "react-native-gesture-handler";
-import { useSharedValue, useAnimatedStyle, useAnimatedGestureHandler, withSpring, runOnJS, withTiming } from "react-native-reanimated";
+import { useSharedValue, useAnimatedStyle, useAnimatedGestureHandler, runOnJS, withTiming } from "react-native-reanimated";
 import { useDispatch } from "react-redux";
-import { useUpdateEffect } from "../../../app/customHooks/useUpdateEffect";
 import { setReplyTo } from "../../../app/redux/rooms/roomsActions";
 import { IMessage } from "../../../app/types/IMessage";
 
 export const useMessageReply = (message: IMessage) => {
     const dispatch = useDispatch();
 
-    const [replyToMessage, setReplyToMessage] = useState<IMessage | null>(null);
-
-    useUpdateEffect(() => {
+    const setReplyToEvent = () => {
         dispatch(setReplyTo({ message: message, roomId: message.room_id }));
-    }, [replyToMessage]);
-
-    // useEffect(() => {
-    //     dispatch(setReplyTo({ message: message, roomId: message.room_id }));
-    // }, []);
+    };
 
     type AnimatedGHContext = {
         startX: number;
@@ -57,8 +49,7 @@ export const useMessageReply = (message: IMessage) => {
             const distance = calculatedX - ctx.startX;
 
             if ((message.fromSelf && distance < width / 2 - 100) || (!message.fromSelf && distance > width / 2 - 100)) {
-                // dispatch(setReplyTo({ message: message, roomId: message.room_id }));
-                runOnJS(setReplyToMessage)(message);
+                runOnJS(setReplyToEvent)();
             }
 
             translation.x.value = withTiming(0);
