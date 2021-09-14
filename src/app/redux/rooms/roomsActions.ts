@@ -10,4 +10,5 @@ export const {
     userLeft,
     userStartedTyping,
     userStoppedTyping,
+    setReplyTo,
 } = roomsSlice.actions;

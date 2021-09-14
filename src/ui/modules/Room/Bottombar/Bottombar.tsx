@@ -1,7 +1,10 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
+import { useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
+import { singleRoomSelector } from "../../../../app/redux/rooms/selectors/singleRoomSelector";
+import { RootState } from "../../../../app/redux/store";
 import { IUser } from "../../../../app/types/IUser";
 import { BACKGROUND_COLOR, BLUE_COLOR, GRAY_COLOR } from "../../../../consts";
 import { SendIcon } from "./SendIcon/SendIcon";
@@ -15,6 +18,10 @@ interface IProps {
 
 export const Bottombar = ({ roomId, users, roomSocket }: IProps) => {
     const { text, handleSend, handleTextChange } = useMessage(roomId, roomSocket, users ?? []);
+
+    const { replyTo } = useSelector((state: RootState) => {
+        return singleRoomSelector(state, roomId);
+    });
 
     return <View style={styles.container}>
         <View style={styles.textInputContainer}>

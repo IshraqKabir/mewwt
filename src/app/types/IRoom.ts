@@ -12,4 +12,5 @@ export interface IRoom {
     messagesHasNext?: boolean;
     isFetchingNewMessages?: boolean;
     roomPresences: IRoomPresence[];
+    replyTo?: IMessage;
 }

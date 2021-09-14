@@ -8,6 +8,7 @@ import { useUnreadMessagesCount } from "../../../customHooks/useUnreadMessagesCo
 import { ChatsNavigator } from "./ChatsNavigator";
 import { useUserSocket } from "./useUserSocket";
 import { useChatMatesOnlineStatuses } from "../../../customHooks/useChatMatesOnlineStatuses";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const MainStack = createStackNavigator();
 

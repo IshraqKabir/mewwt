@@ -1,6 +1,7 @@
 import { NavigationProp, useRoute } from "@react-navigation/core";
 import React from "react";
 import { Text, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Room } from "../../../modules/Room/Room";
 
 interface IProps {
@@ -19,8 +20,10 @@ export const RoomScreen = ({ navigation }: IProps) => {
     }
 
     return (
-        <View>
-            <Room roomId={params?.room_id} navigation={navigation} />
-        </View>
+        <GestureHandlerRootView>
+            <View>
+                <Room roomId={params?.room_id} navigation={navigation} />
+            </View>
+        </GestureHandlerRootView>
     );
 };
