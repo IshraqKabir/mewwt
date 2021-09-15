@@ -1,6 +1,6 @@
 import { Dimensions } from "react-native";
 import { PanGestureHandlerGestureEvent } from "react-native-gesture-handler";
-import { useSharedValue, useAnimatedStyle, useAnimatedGestureHandler, runOnJS, withTiming } from "react-native-reanimated";
+import { useSharedValue, useAnimatedStyle, useAnimatedGestureHandler, runOnJS, withTiming, cancelAnimation } from "react-native-reanimated";
 import { useDispatch } from "react-redux";
 import { setReplyTo } from "../../../app/redux/rooms/roomsActions";
 import { IMessage } from "../../../app/types/IMessage";
