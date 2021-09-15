@@ -7,6 +7,7 @@ import { singleRoomSelector } from "../../../../app/redux/rooms/selectors/single
 import { RootState } from "../../../../app/redux/store";
 import { IUser } from "../../../../app/types/IUser";
 import { BACKGROUND_COLOR, BLUE_COLOR, GRAY_COLOR } from "../../../../consts";
+import { ReplyTo } from "../../../components/ReplyTo/ReplyTo";
 import { SendIcon } from "./SendIcon/SendIcon";
 import { useMessage } from "./useMessage";
 
@@ -23,31 +24,38 @@ export const Bottombar = ({ roomId, users, roomSocket }: IProps) => {
         return singleRoomSelector(state, roomId);
     });
 
-    return <View style={styles.container}>
-        <View style={styles.textInputContainer}>
-            <TextInput
-                style={styles.textInput}
-                value={text}
-                onChangeText={text => handleTextChange(text)}
-                placeholder="Message"
-                placeholderTextColor={GRAY_COLOR}
-                selectionColor={BLUE_COLOR}
-                multiline={true}
-            />
-        </View>
-        <View style={styles.sendIconContainer}>
-            <SendIcon
-                isDisabled={text === "" || text.length > 1000}
-                handlePress={handleSend}
-            />
-        </View>
-    </View>;
+    return (
+        <>
+            {replyTo ?
+                <ReplyTo message={replyTo} />
+                : null}
+            <View style={styles.container}>
+                <View style={styles.textInputContainer}>
+                    <TextInput
+                        style={styles.textInput}
+                        value={text}
+                        onChangeText={text => handleTextChange(text)}
+                        placeholder="Message"
+                        placeholderTextColor={GRAY_COLOR}
+                        selectionColor={BLUE_COLOR}
+                        multiline={true}
+                    />
+                </View>
+                <View style={styles.sendIconContainer}>
+                    <SendIcon
+                        isDisabled={text === "" || text.length > 1000}
+                        handlePress={handleSend}
+                    />
+                </View>
+            </View>
+        </>);
 };
 
 const styles = StyleSheet.create({
     container: {
         flexDirection: "row",
         padding: 15,
+        paddingTop: 0,
         alignItems: "center",
         width: "100%",
         backgroundColor: BACKGROUND_COLOR,
