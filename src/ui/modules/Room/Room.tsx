@@ -7,7 +7,6 @@ import { MessageList } from './MessageList/MessageList';
 import { RoomTopbar } from './RoomTopbar/RoomTopbar';
 import { useInitRoom } from './useInitRoom';
 import { RoomPresenceList } from './RoomPresenceList/RoomPresenceList';
-import { invalid } from 'moment';
 
 interface IProps {
     roomId: number;

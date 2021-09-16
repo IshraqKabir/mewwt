@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,7 +6,7 @@ import { authSelector } from "../../../../app/redux/auth/selectors/authSelector"
 import { incrementPage } from "../../../../app/redux/rooms/roomsActions";
 import { singleRoomSelector } from "../../../../app/redux/rooms/selectors/singleRoomSelector";
 import { RootState } from "../../../../app/redux/store";
-import { IMessage } from "../../../../app/types/IMessage";
+import { IRoom } from "../../../../app/types/IRoom";
 import { isMessageUserActive } from "../../../../app/utils/isMessageUserActive";
 import { messageHasNextFromSameSender } from "../../../../app/utils/messageHasNextFromSameSender";
 import { messageHasPrevFromSameSender } from "../../../../app/utils/messageHasPrevFromSameSender";
@@ -24,6 +24,13 @@ export const MessageList = ({ roomId }: IProps) => {
     const { users: roomUsers, isFetchingNewMessages, messages } = useSelector(
         (state: RootState) => {
             return singleRoomSelector(state, roomId);
+        },
+        (next: IRoom, prev: IRoom) => {
+            if (next.messages.length !== prev.messages.length) {
+                return false;
+            }
+
+            return true;
         }
     );
 
@@ -85,15 +92,17 @@ export const MessageList = ({ roomId }: IProps) => {
         );
     };
 
+    const keyExtractor = (message: any) => message.id;
+
     return (
         <View style={styles.container}>
             <FlatList
                 data={messages ?? []}
-                keyExtractor={(message) => message.id}
+                keyExtractor={keyExtractor}
                 renderItem={renderItem}
                 inverted={true}
                 onEndReached={handlePagination}
-                onEndReachedThreshold={0}
+                onEndReachedThreshold={1}
                 ListEmptyComponent={
                     <Text
                         style={{

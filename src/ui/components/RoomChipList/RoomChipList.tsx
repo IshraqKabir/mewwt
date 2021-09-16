@@ -29,7 +29,7 @@ export const RoomChipList = ({ roomChips, isLoading, handlePress }: IProps) => {
                 <FlatList
                     data={roomChips}
                     keyExtractor={(roomChip) => roomChip.room_id}
-                    renderItem={({ item: roomChip }: { item: IRoomChip }) => {
+                    renderItem={({ item: roomChip }: { item: IRoomChip; }) => {
                         return (
                             <RoomChip
                                 key={roomChip.room_id}

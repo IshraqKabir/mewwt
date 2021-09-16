@@ -34,8 +34,8 @@ export const Message = ({
 }: IProps) => {
     const { animatedStyles: messageReplyAnimatedStyles, gestureHandler } = useMessageReply(message);
 
-    // if (message.id === 164)
-    //     console.log(`${message.id}: ${message.text} has rerendered`);
+    if (message.id === 164)
+        console.log(`${message.id}: ${message.text} has rerendered`);
 
     return (
         <View>

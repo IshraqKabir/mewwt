@@ -13,6 +13,7 @@ export const singleRoomSelector = (
             messages: [],
             users: [],
             is_group: !!is_group,
+            roomPresences: [],
         }
     );
 };
