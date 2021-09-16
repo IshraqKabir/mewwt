@@ -7,9 +7,7 @@ export const getRoomDetails = async (roomId: number): Promise<IRoom | null> => {
         const res = await axiosInstance.get(`/api/room/${roomId}/details`);
         return res.data;
     } catch (error) {
-        if (axios.isCancel(error)) {
-            // console.log("request cancelled");
-        }
+        console.log("error at getroomdetails", error);
         return null;
     }
 };

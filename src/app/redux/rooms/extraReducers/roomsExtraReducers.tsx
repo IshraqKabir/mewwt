@@ -1,5 +1,5 @@
 import { ActionReducerMapBuilder } from "@reduxjs/toolkit";
-import { addUser } from "../reducers/addMessage";
+import { addMessage } from "../reducers/addMessage";
 import { getRoomDetailsThunk } from "../thunks/getRoomDetailsThunk";
 import { getRoomMessagesThunk } from "../thunks/getRoomMessagesThunk";
 import { sendMessageThunk } from "../thunks/sendMessageThunk";
@@ -29,7 +29,7 @@ export const roomsExtraReducers = (
     );
 
     // send message
-    builder.addCase(sendMessageThunk.fulfilled, addUser);
+    builder.addCase(sendMessageThunk.fulfilled, addMessage);
 
     // get room messages
     builder.addCase(

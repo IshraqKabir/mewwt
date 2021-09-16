@@ -7,7 +7,7 @@ import { singleRoomSelector } from "../../../../app/redux/rooms/selectors/single
 import { RootState } from "../../../../app/redux/store";
 import { IUser } from "../../../../app/types/IUser";
 import { BACKGROUND_COLOR, BLUE_COLOR, GRAY_COLOR } from "../../../../consts";
-import { ReplyTo } from "../../../components/ReplyTo/ReplyTo";
+import { ReplyToInput } from "../../../components/ReplyToInput/ReplyToInput";
 import { SendIcon } from "./SendIcon/SendIcon";
 import { useMessage } from "./useMessage";
 
@@ -18,16 +18,16 @@ interface IProps {
 }
 
 export const Bottombar = ({ roomId, users, roomSocket }: IProps) => {
-    const { text, handleSend, handleTextChange } = useMessage(roomId, roomSocket, users ?? []);
-
     const { replyTo } = useSelector((state: RootState) => {
         return singleRoomSelector(state, roomId);
     });
 
+    const { text, handleSend, handleTextChange } = useMessage(roomId, roomSocket, users ?? [], replyTo);
+
     return (
         <>
             {replyTo ?
-                <ReplyTo message={replyTo} />
+                <ReplyToInput replyTo={replyTo} roomId={roomId} />
                 : null}
             <View style={styles.container}>
                 <View style={styles.textInputContainer}>

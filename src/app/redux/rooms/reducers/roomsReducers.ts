@@ -1,4 +1,4 @@
-import { addUser } from "./addMessage";
+import { addMessage } from "./addMessage";
 import { incrementPage } from "./incrementPage";
 import { initRoom } from "./initRoom";
 import { readMessages } from "./readMessages";
@@ -11,7 +11,7 @@ import { userStoppedTyping } from "./userStoppedTyping";
 
 export const roomsReducers = {
     initRoom: initRoom,
-    addMessage: addUser,
+    addMessage: addMessage,
     incrementPage: incrementPage,
     readMessages: readMessages,
     setUnreadMessagesCount: setUnreadMessagesCount,

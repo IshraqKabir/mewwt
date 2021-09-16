@@ -1,14 +1,15 @@
 import { IMessage } from "../../../types/IMessage";
+import { IReplyTo } from "../../../types/IReplyTo";
 import { IRoomsState } from "../types";
 
 export const setReplyTo = (
     state: IRoomsState,
     { payload: {
-        message,
+        replyTo,
         roomId
     } }: {
         payload: {
-            message: IMessage | null;
+            replyTo: IReplyTo | null;
             roomId: number;
         };
     }
@@ -23,7 +24,7 @@ export const setReplyTo = (
 
         return {
             ...room,
-            replyTo: message ?? undefined,
+            replyTo: replyTo ?? undefined,
         };
     });
 };

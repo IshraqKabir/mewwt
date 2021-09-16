@@ -80,6 +80,7 @@ export const MessageList = ({ messages, roomId }: IProps) => {
                                     )
                             }
                             showSenderName={showSenderName}
+                            authUserId={currentUser?.id ?? 0}
                         />
                     );
                 }}

@@ -1,4 +1,5 @@
 import { IMessage } from "./IMessage";
+import { IReplyTo } from "./IReplyTo";
 import { IRoomPresence } from "./IRoomPresence";
 import { IUser } from "./IUser";
 
@@ -12,5 +13,5 @@ export interface IRoom {
     messagesHasNext?: boolean;
     isFetchingNewMessages?: boolean;
     roomPresences: IRoomPresence[];
-    replyTo?: IMessage;
+    replyTo?: IReplyTo;
 }

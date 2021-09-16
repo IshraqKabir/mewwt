@@ -7,6 +7,7 @@ import { IMessage } from "../../../app/types/IMessage";
 import { SeenIcon } from "../../../assets/icons/SeenIcon/SeenIcon";
 import { SentIcon } from "../../../assets/icons/SentIcon/SentIcon";
 import { BLUE_COLOR, DP_WIDTH, LIGHT_GRAY_COLOR } from "../../../consts";
+import { ReplyToMessage } from "../ReplyToMessage/ReplyToMessage";
 import { useMessageReply } from "./useMessageReply";
 
 const DP = require("../../../assets/images/default_dp.jpg");
@@ -17,6 +18,7 @@ interface IProps {
     hasPrevFromSameSender: boolean;
     showSenderName: boolean;
     isUserOnline: boolean;
+    authUserId: number;
 }
 
 // has prev means down
@@ -28,6 +30,7 @@ export const Message = ({
     hasPrevFromSameSender,
     showSenderName,
     isUserOnline,
+    authUserId
 }: IProps) => {
     const { animatedStyles: messageReplyAnimatedStyles, gestureHandler } = useMessageReply(message);
 
@@ -58,75 +61,95 @@ export const Message = ({
                             ) : null}
                         </View>
                     ) : null}
-                    <View
-                        style={{
-                            ...styles.messageContainer,
-                            backgroundColor: message.fromSelf
-                                ? BLUE_COLOR
-                                : LIGHT_GRAY_COLOR,
-                            borderBottomLeftRadius: message.fromSelf
-                                ? 15
-                                : hasPrevFromSameSender
-                                    ? 1
-                                    : 15,
-                            borderBottomRightRadius: !message.fromSelf
-                                ? 15
-                                : hasPrevFromSameSender
-                                    ? 1
-                                    : 15,
-                            borderTopLeftRadius: message.fromSelf
-                                ? 15
-                                : hasNextFromSameSender
-                                    ? 1
-                                    : 15,
-                            borderTopRightRadius: !message.fromSelf
-                                ? 15
-                                : hasNextFromSameSender
-                                    ? 1
-                                    : 15,
-                        }}
-                    >
-                        {!hasNextFromSameSender &&
-                            !message.fromSelf &&
-                            showSenderName ? (
-                            <Text
-                                style={{
-                                    ...styles.senderName,
-                                    color: message.fromSelf ? "#ffffff" : "#000000",
-                                    alignSelf: message.fromSelf
-                                        ? "flex-end"
-                                        : "flex-start",
-                                }}
-                            >
-                                {message.sender?.first_name}{" "}
-                                {message.sender?.last_name}
-                            </Text>
-                        ) : null}
-                        <Text
+                    <View style={{ maxWidth: "50%" }}>
+                        {
+                            message.reply_to_message_id
+                            && message.reply_to_message_text
+                            && message.reply_to_message_sender_id
+                            &&
+                            <ReplyToMessage replyTo={{
+                                reply_to_message_id: message.reply_to_message_id,
+                                reply_to_message_sender_first_name: message.reply_to_message_sender_first_name ?? "",
+                                reply_to_message_sender_last_name: message.reply_to_message_sender_last_name ?? "",
+                                reply_to_message_sender_id: message.reply_to_message_sender_id,
+                                reply_to_message_text: message.reply_to_message_text
+                            }}
+                                authUserId={authUserId}
+                                fromSelf={!!message.fromSelf}
+                            />
+                        }
+                        <View
                             style={{
-                                ...styles.message,
-                                color: message.fromSelf ? "#ffffff" : "#000000",
+                                ...styles.messageContainer,
+                                backgroundColor: message.fromSelf
+                                    ? BLUE_COLOR
+                                    : LIGHT_GRAY_COLOR,
+                                borderBottomLeftRadius: message.fromSelf
+                                    ? 15
+                                    : hasPrevFromSameSender
+                                        ? 1
+                                        : 15,
+                                borderBottomRightRadius: !message.fromSelf
+                                    ? 15
+                                    : hasPrevFromSameSender
+                                        ? 1
+                                        : 15,
+                                borderTopLeftRadius: message.fromSelf
+                                    ? 15
+                                    : hasNextFromSameSender
+                                        ? 1
+                                        : 15,
+                                borderTopRightRadius: !message.fromSelf
+                                    ? 15
+                                    : hasNextFromSameSender
+                                        ? 1
+                                        : 15,
                             }}
                         >
-                            {message.text}
-                        </Text>
-                        {message.fromSelf ? (
-                            <Text
-                                style={{
-                                    alignSelf: "flex-end",
-                                }}
-                            >
-                                {message.is_read ? (
-                                    <View>
-                                        <SeenIcon fill={"#fff"} />
-                                    </View>
-                                ) : (
-                                    <View>
-                                        <SentIcon fill={"#fff"} />
-                                    </View>
-                                )}
-                            </Text>
-                        ) : null}
+                            {!hasNextFromSameSender &&
+                                !message.fromSelf &&
+                                showSenderName ? (
+                                <Text
+                                    style={{
+                                        ...styles.senderName,
+                                        color: message.fromSelf ? "#ffffff" : "#000000",
+                                        alignSelf: message.fromSelf
+                                            ? "flex-end"
+                                            : "flex-start",
+                                    }}
+                                >
+                                    {message.sender?.first_name}{" "}
+                                    {message.sender?.last_name}
+                                </Text>
+                            ) : null}
+                            <View>
+                                <Text
+                                    style={{
+                                        ...styles.message,
+                                        color: message.fromSelf ? "#ffffff" : "#000000",
+                                    }}
+                                >
+                                    {message.text}
+                                </Text>
+                            </View>
+                            {message.fromSelf ? (
+                                <Text
+                                    style={{
+                                        alignSelf: "flex-end",
+                                    }}
+                                >
+                                    {message.is_read ? (
+                                        <View>
+                                            <SeenIcon fill={"#fff"} />
+                                        </View>
+                                    ) : (
+                                        <View>
+                                            <SentIcon fill={"#fff"} />
+                                        </View>
+                                    )}
+                                </Text>
+                            ) : null}
+                        </View>
                     </View>
                 </Animated.View>
             </PanGestureHandler>
@@ -149,7 +172,6 @@ const styles = StyleSheet.create({
         marginHorizontal: 5,
         paddingHorizontal: 10,
         paddingVertical: 10,
-        maxWidth: "50%",
     },
     dp: {
         height: "100%",

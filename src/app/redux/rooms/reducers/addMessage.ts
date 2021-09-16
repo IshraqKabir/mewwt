@@ -1,9 +1,9 @@
 import { IMessage } from "../../../types/IMessage";
 import { IRoomsState } from "../types";
 
-export const addUser = (
+export const addMessage = (
     state: IRoomsState,
-    { payload }: { payload: IMessage | null }
+    { payload }: { payload: IMessage | null; }
 ) => {
     if (!payload) return;
     const message = payload;

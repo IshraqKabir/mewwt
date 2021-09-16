@@ -1,6 +1,7 @@
+import { IReplyTo } from "./IReplyTo";
 import { IUser } from "./IUser";
 
-export interface IMessage {
+export type IMessage = {
     id?: number;
     text: string;
     sender_id?: number;
@@ -12,4 +13,4 @@ export interface IMessage {
     created_at: string;
     readerIds?: (number | null)[];
     is_read?: boolean;
-}
+} & IReplyTo;

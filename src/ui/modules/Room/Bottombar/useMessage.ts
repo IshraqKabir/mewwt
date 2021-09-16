@@ -3,10 +3,11 @@ import { Socket } from "socket.io-client";
 import { useDebounce } from "../../../../app/customHooks/useDebounce";
 import { sendMessageThunk } from "../../../../app/redux/rooms/thunks/sendMessageThunk";
 import { IMessage } from "../../../../app/types/IMessage";
+import { IReplyTo } from "../../../../app/types/IReplyTo";
 import { IUser } from "../../../../app/types/IUser";
 import { pluck } from "../../../../app/utils/pluck";
 
-export const useMessage = (roomId: number, roomSocket: Socket | null, roomUsers: IUser[]) => {
+export const useMessage = (roomId: number, roomSocket: Socket | null, roomUsers: IUser[], replyTo?: IReplyTo) => {
     const { value: text, setValue: setText } = useDebounce<string>("", () => {
         roomSocket?.emit("user-started-typing", { userIds: pluck(roomUsers, "id") });
     }, () => {
@@ -21,6 +22,7 @@ export const useMessage = (roomId: number, roomSocket: Socket | null, roomUsers:
             message: {
                 text: text,
             } as IMessage,
+            replyTo: replyTo
         }));
 
         setText("");

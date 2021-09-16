@@ -21,8 +21,6 @@ import { getToken } from "../../../app/repository/storage/getToken";
 import { IMessage } from "../../../app/types/IMessage";
 import { IRoomPresence } from "../../../app/types/IRoomPresence";
 import { useRoomActivityStatus } from "./useRoomActivityStatus";
-import { userStartedTyping as roomChipUserStartedTyping } from "../../../app/redux/chatList/chatListActions";
-import { userStoppedTyping as roomChipUserStoppedTyping } from "../../../app/redux/chatList/chatListActions";
 
 export const useRoom = (roomId: number) => {
     const dispatch = useDispatch();
@@ -63,6 +61,8 @@ export const useRoom = (roomId: number) => {
         setRoomSocket(socket);
 
         socket.on("message", (message: IMessage) => {
+            console.log(message);
+
             if (message.sender_id === user?.id) return;
 
             dispatch(addMessage(message));

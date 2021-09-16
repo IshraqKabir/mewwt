@@ -9,7 +9,15 @@ export const useMessageReply = (message: IMessage) => {
     const dispatch = useDispatch();
 
     const setReplyToEvent = () => {
-        dispatch(setReplyTo({ message: message, roomId: message.room_id }));
+        dispatch(setReplyTo({
+            replyTo: {
+                reply_to_message_id: message.id,
+                reply_to_message_sender_id: message.sender_id,
+                reply_to_message_sender_first_name: message.sender_first_name,
+                reply_to_message_sender_last_name: message.sender_last_name,
+                reply_to_message_text: message.text
+            }, roomId: message.room_id
+        }));
     };
 
     type AnimatedGHContext = {
