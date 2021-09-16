@@ -12,9 +12,9 @@ import { searchUsersThunk } from "../../../app/redux/createGroup/thunks/searchUs
 import { IUser } from "../../../app/types/IUser";
 
 export const useCreateGroup = () => {
+    const { chatMates } = useSelector(authSelector);
     const dispatch = useDispatch();
     const { users, selectedUsers } = useSelector(createGroupSelector);
-    const { chatMates } = useSelector(authSelector);
     const { text, handleChange: handleSearchTextChange } = useSearch(
         searchUsersThunk,
         ""

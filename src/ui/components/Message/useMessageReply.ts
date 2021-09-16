@@ -54,9 +54,9 @@ export const useMessageReply = (message: IMessage) => {
         },
         onEnd: (event, ctx) => {
             const calculatedX = ctx.startX + event.translationX * 0.5;
-            const distance = calculatedX - ctx.startX;
+            const distance = Math.abs(calculatedX - ctx.startX);
 
-            if ((message.fromSelf && distance < width / 2 - 100) || (!message.fromSelf && distance > width / 2 - 100)) {
+            if (distance > width / 2 - 100) {
                 runOnJS(setReplyToEvent)();
             }
 

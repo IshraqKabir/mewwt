@@ -1,27 +1,44 @@
 import { NavigationProp } from "@react-navigation/core";
 import React from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
+import { useSelector } from "react-redux";
+import { authSelector } from "../../../../app/redux/auth/selectors/authSelector";
+import { singleRoomSelector } from "../../../../app/redux/rooms/selectors/singleRoomSelector";
+import { RootState } from "../../../../app/redux/store";
 import { BackIcon } from "../../../../assets/icons/BackIcon/BackIcon";
 import { BACKGROUND_COLOR, DP_WIDTH } from "../../../../consts";
 import { useBackHandler } from "../../../customHooks/useBackHandler";
+import { useRoomActivityStatus } from "../useRoomActivityStatus";
+import { useRoomMessagesMisc } from "../useRoomMessagesMisc";
 
 const DP = require("../../../../assets/images/default_dp.jpg");
 
 interface IProps {
     roomId: number;
-    roomName: string;
-    is_group: boolean;
-    status: string;
     navigation: NavigationProp<any, any>;
 }
 
 export const RoomTopbar = ({
     roomId,
-    roomName,
-    is_group,
     navigation,
-    status,
 }: IProps) => {
+    const { user, chatMates } = useSelector(authSelector);
+
+    const { is_group, name: roomName, users, } = useSelector(
+        (state: RootState) => {
+            return singleRoomSelector(state, roomId);
+        }
+    );
+
+    const { status } = useRoomActivityStatus(
+        users ?? [],
+        is_group,
+        user,
+        chatMates
+    );
+
+    useRoomMessagesMisc(roomId);
+
     const handleBack = () => {
         const state =
             navigation.getState().routes[navigation.getState().index - 1]
@@ -33,8 +50,8 @@ export const RoomTopbar = ({
                 is_group === undefined
                     ? prevRouteName ?? "chats"
                     : is_group
-                    ? "groups"
-                    : "chats",
+                        ? "groups"
+                        : "chats",
         });
     };
 

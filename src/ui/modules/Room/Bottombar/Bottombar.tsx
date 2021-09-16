@@ -13,12 +13,11 @@ import { useMessage } from "./useMessage";
 
 interface IProps {
     roomId: number;
-    users: IUser[] | undefined;
     roomSocket: Socket | null;
 }
 
-export const Bottombar = ({ roomId, users, roomSocket }: IProps) => {
-    const { replyTo } = useSelector((state: RootState) => {
+export const Bottombar = ({ roomId, roomSocket }: IProps) => {
+    const { replyTo, users } = useSelector((state: RootState) => {
         return singleRoomSelector(state, roomId);
     });
 

@@ -23,15 +23,15 @@ export const readMessages = (
             ...room,
             messages: room.messages
                 ? room.messages.map((message) => {
-                      if (!messageIds.includes(message.id || -1)) {
-                          return message;
-                      }
+                    if (!messageIds.includes(message.id || -1)) {
+                        return message;
+                    }
 
-                      return {
-                          ...message,
-                          readerIds: [readerId, ...(message.readerIds || [])],
-                      };
-                  })
+                    return {
+                        ...message,
+                        readerIds: [readerId, ...(message.readerIds || [])],
+                    };
+                })
                 : [],
         };
     });

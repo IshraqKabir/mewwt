@@ -9,13 +9,12 @@ import { IRoomPresence } from "../../../../app/types/IRoomPresence";
 import { BACKGROUND_COLOR } from "../../../../consts";
 
 interface IProps {
-    roomPresences: IRoomPresence[];
     roomId: number;
 }
 
-export const RoomPresenceList = ({ roomPresences, roomId }: IProps) => {
-    const { user: currentUser, chatMates } = useSelector(authSelector);
-    const { users: roomUsers, } = useSelector(
+export const RoomPresenceList = ({ roomId }: IProps) => {
+    const { user: currentUser, } = useSelector(authSelector);
+    const { users: roomUsers, roomPresences } = useSelector(
         (state: RootState) => {
             return singleRoomSelector(state, roomId);
         }

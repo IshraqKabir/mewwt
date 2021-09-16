@@ -16,13 +16,12 @@ import { Message } from "../../../components/Message/Message";
 import { MessageListFooter } from "../MessageListFooter/MessageListFooter";
 
 interface IProps {
-    messages: IMessage[];
     roomId: number;
 }
 
-export const MessageList = ({ messages, roomId }: IProps) => {
+export const MessageList = ({ roomId }: IProps) => {
     const { user: currentUser, chatMates } = useSelector(authSelector);
-    const { users: roomUsers, isFetchingNewMessages } = useSelector(
+    const { users: roomUsers, isFetchingNewMessages, messages } = useSelector(
         (state: RootState) => {
             return singleRoomSelector(state, roomId);
         }
@@ -32,7 +31,7 @@ export const MessageList = ({ messages, roomId }: IProps) => {
 
     const handlePagination = () => {
         // we are just incrementing the page number
-        // the fetching will be called from useInitRoom
+        // the fetching will be called from useRoomMessagesMisc
         // once the page is incremented and conditions met
         dispatch(incrementPage({ roomId: roomId }));
     };
@@ -40,50 +39,58 @@ export const MessageList = ({ messages, roomId }: IProps) => {
     const messagesLength = messages.length;
     const showSenderName = roomUsers?.length ? roomUsers.length > 2 : false;
 
+    if (messages.length === 0) {
+        return <View><Text>No Messages yet</Text></View>;
+    }
+
+    console.log("flatlist rerender");
+
+    const renderItem = ({ item, index }: { item: any, index: number; }) => {
+        let message = parseMessageSender(
+            item,
+            roomUsers,
+            currentUser
+        );
+        message.is_read =
+            (message.readerIds?.filter((id) => id !== null)
+                .length || 0) > 0;
+
+        return (
+            <Message
+                key={message.id}
+                message={message}
+                isUserOnline={isMessageUserActive(
+                    message.sender_id ?? 0,
+                    chatMates
+                )}
+                hasPrevFromSameSender={
+                    index === 0
+                        ? false
+                        : messageHasPrevFromSameSender(
+                            message,
+                            messages[index - 1]
+                        )
+                }
+                hasNextFromSameSender={
+                    index === messagesLength - 1
+                        ? false
+                        : messageHasNextFromSameSender(
+                            message,
+                            messages[index + 1]
+                        )
+                }
+                showSenderName={showSenderName}
+                authUserId={currentUser?.id ?? 0}
+            />
+        );
+    };
+
     return (
         <View style={styles.container}>
             <FlatList
-                data={messages}
+                data={messages ?? []}
                 keyExtractor={(message) => message.id}
-                renderItem={({ item, index }) => {
-                    let message = parseMessageSender(
-                        item,
-                        roomUsers,
-                        currentUser
-                    );
-                    message.is_read =
-                        (message.readerIds?.filter((id) => id !== null)
-                            .length || 0) > 0;
-
-                    return (
-                        <Message
-                            key={message.id}
-                            message={message}
-                            isUserOnline={isMessageUserActive(
-                                message.sender_id ?? 0,
-                                chatMates
-                            )}
-                            hasPrevFromSameSender={
-                                index === 0
-                                    ? false
-                                    : messageHasPrevFromSameSender(
-                                        message,
-                                        messages[index - 1]
-                                    )
-                            }
-                            hasNextFromSameSender={
-                                index === messagesLength - 1
-                                    ? false
-                                    : messageHasNextFromSameSender(
-                                        message,
-                                        messages[index + 1]
-                                    )
-                            }
-                            showSenderName={showSenderName}
-                            authUserId={currentUser?.id ?? 0}
-                        />
-                    );
-                }}
+                renderItem={renderItem}
                 inverted={true}
                 onEndReached={handlePagination}
                 onEndReachedThreshold={0}

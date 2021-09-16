@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavigationProp } from '@react-navigation/core';
 import { Text } from 'react-native';
 import { StyleSheet, View } from 'react-native';
 import { Bottombar } from './Bottombar/Bottombar';
 import { MessageList } from './MessageList/MessageList';
 import { RoomTopbar } from './RoomTopbar/RoomTopbar';
-import { useRoom } from './useRoom';
+import { useInitRoom } from './useInitRoom';
 import { RoomPresenceList } from './RoomPresenceList/RoomPresenceList';
+import { invalid } from 'moment';
 
 interface IProps {
     roomId: number;
@@ -14,30 +15,29 @@ interface IProps {
 }
 
 export const Room = ({ roomId, navigation }: IProps) => {
-    const { isInvalid, name, messages, users, is_group, status, roomPresences, roomSocket } = useRoom(roomId);
+    const { id, isInvalid, roomSocket, } = useInitRoom(roomId);
 
-    if (isInvalid) {
+    if (isInvalid || !roomSocket || id === 0) {
         return (
             <View style={styles.container}>
-                <Text>Invalid room</Text>
+                <Text>Waiting...</Text>
             </View>
         );
     }
+
+    console.log("room rerender");
 
     return (
         <View style={styles.container}>
             <RoomTopbar
                 roomId={roomId}
-                roomName={name}
-                is_group={is_group}
-                status={status}
                 navigation={navigation}
             />
-            {messages ? <MessageList roomId={roomId} messages={messages} /> : null}
+            <MessageList roomId={roomId} />
 
-            {roomPresences ? <RoomPresenceList roomId={roomId} roomPresences={roomPresences} /> : null}
+            <RoomPresenceList roomId={roomId} />
 
-            <Bottombar roomId={roomId} users={users} roomSocket={roomSocket} />
+            <Bottombar roomId={roomId} roomSocket={roomSocket} />
         </View>
     );
 };
