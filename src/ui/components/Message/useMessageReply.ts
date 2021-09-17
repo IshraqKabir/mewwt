@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { setReplyTo } from "../../../app/redux/rooms/roomsActions";
 import { IMessage } from "../../../app/types/IMessage";
 
-export const useMessageReply = (message: IMessage) => {
+export const useMessageReply = (message: IMessage, fromSelf: boolean) => {
     const dispatch = useDispatch();
 
     const setReplyToEvent = () => {
@@ -46,7 +46,7 @@ export const useMessageReply = (message: IMessage) => {
         },
         onActive: (event, ctx) => {
             let calculatedX = ctx.startX + event.translationX * 0.5;
-            let distance = (calculatedX - ctx.startX) * (message.fromSelf ? -1 : 1);
+            let distance = (calculatedX - ctx.startX) * (fromSelf ? -1 : 1);
 
             if (distance > 0 && distance < width / 2) {
                 translation.x.value = calculatedX;

@@ -1,7 +1,6 @@
 import { IMessage } from "../types/IMessage";
 import { IUser } from "../types/IUser";
 
-
 export const parseMessageSender = (message: IMessage, roomUsers: IUser[] | undefined, currentUser: IUser | null): IMessage => {
     if (message.sender_id === currentUser?.id) {
         return {

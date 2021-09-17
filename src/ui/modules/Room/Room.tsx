@@ -3,10 +3,11 @@ import { NavigationProp } from '@react-navigation/core';
 import { Text } from 'react-native';
 import { StyleSheet, View } from 'react-native';
 import { Bottombar } from './Bottombar/Bottombar';
-import { MessageList } from './MessageList/MessageList';
+import { MessageListOld } from './MessageListOld/MessageListOld';
 import { RoomTopbar } from './RoomTopbar/RoomTopbar';
 import { useInitRoom } from './useInitRoom';
 import { RoomPresenceList } from './RoomPresenceList/RoomPresenceList';
+import { Messages } from './Messages/Messages';
 
 interface IProps {
     roomId: number;
@@ -14,7 +15,7 @@ interface IProps {
 }
 
 export const Room = ({ roomId, navigation }: IProps) => {
-    const { id, isInvalid, roomSocket, } = useInitRoom(roomId);
+    const { id, isInvalid, roomSocket, user, chatMates, isGroup } = useInitRoom(roomId);
 
     if (isInvalid || !roomSocket || id === 0) {
         return (
@@ -24,15 +25,18 @@ export const Room = ({ roomId, navigation }: IProps) => {
         );
     }
 
-    console.log("room rerender");
-
     return (
         <View style={styles.container}>
             <RoomTopbar
                 roomId={roomId}
                 navigation={navigation}
             />
-            <MessageList roomId={roomId} />
+            <Messages
+                roomId={roomId}
+                authUserId={user?.id ?? 0}
+                chatMates={chatMates}
+                isGroup={isGroup}
+            />
 
             <RoomPresenceList roomId={roomId} />
 

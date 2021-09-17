@@ -1,6 +1,7 @@
 import { useDispatch } from "react-redux";
 import { Socket } from "socket.io-client";
 import { useDebounce } from "../../../../app/customHooks/useDebounce";
+import { setReplyTo } from "../../../../app/redux/rooms/roomsActions";
 import { sendMessageThunk } from "../../../../app/redux/rooms/thunks/sendMessageThunk";
 import { IMessage } from "../../../../app/types/IMessage";
 import { IReplyTo } from "../../../../app/types/IReplyTo";
@@ -23,6 +24,12 @@ export const useMessage = (roomId: number, roomSocket: Socket | null, roomUsers:
                 text: text,
             } as IMessage,
             replyTo: replyTo
+        }));
+
+        // set replyTo to null after sending
+        dispatch(setReplyTo({
+            replyTo: null,
+            roomId: roomId
         }));
 
         setText("");

@@ -1,9 +1,15 @@
-import React from "react";
+import React, { memo, useMemo } from "react";
 import { Image } from "react-native";
 import { StyleSheet, Text, View } from "react-native";
 import { PanGestureHandler } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
+import { IChatMate } from "../../../app/types/IChatMate";
 import { IMessage } from "../../../app/types/IMessage";
+import { arrayToHash } from "../../../app/utils/arrayToHash";
+import { hasChatMatesChanged } from "../../../app/utils/hasChatMatesChanged";
+import { isMessageUserActive } from "../../../app/utils/isMessageUserActive";
+import { messageHasNextFromSameSender } from "../../../app/utils/messageHasNextFromSameSender";
+import { messageHasPrevFromSameSender } from "../../../app/utils/messageHasPrevFromSameSender";
 import { SeenIcon } from "../../../assets/icons/SeenIcon/SeenIcon";
 import { SentIcon } from "../../../assets/icons/SentIcon/SentIcon";
 import { BLUE_COLOR, DP_WIDTH, LIGHT_GRAY_COLOR } from "../../../consts";
@@ -13,28 +19,54 @@ import { useMessageReply } from "./useMessageReply";
 const DP = require("../../../assets/images/default_dp.jpg");
 
 interface IProps {
+    index: number;
     message: IMessage;
-    hasNextFromSameSender: boolean;
-    hasPrevFromSameSender: boolean;
-    showSenderName: boolean;
-    isUserOnline: boolean;
     authUserId: number;
+    allMessages: IMessage[];
+    chatMates: IChatMate[];
+    isGroup: boolean;
 }
 
 // has prev means down
 // has next means up
 
-export const Message = ({
+export const Message = memo(({
+    index,
     message,
-    hasNextFromSameSender,
-    hasPrevFromSameSender,
-    showSenderName,
-    isUserOnline,
-    authUserId
+    authUserId,
+    allMessages,
+    chatMates,
+    isGroup,
 }: IProps) => {
-    const { animatedStyles: messageReplyAnimatedStyles, gestureHandler } = useMessageReply(message);
+    const fromSelf = message.sender_id === authUserId;
 
-    if (message.id === 164)
+    const { animatedStyles: messageReplyAnimatedStyles, gestureHandler } = useMessageReply(message, fromSelf);
+
+    const hasPrevFromSameSender = useMemo(() => index === 0
+        ? false
+        : messageHasPrevFromSameSender(
+            message,
+            allMessages[index - 1]
+        ), []);
+
+    const hasNextFromSameSender = useMemo(() => index === allMessages.length - 1
+        ? false
+        : messageHasNextFromSameSender(
+            message,
+            allMessages[index + 1]
+        )
+        , []);
+
+    const isUserOnline = useMemo(() => isMessageUserActive(message.sender_id ?? 0, chatMates, message), [chatMates]);
+
+    const showSenderName = isGroup;
+
+    const isRead = useMemo(() => {
+        return (message.readerIds?.filter((id) => id !== null)
+            .length || 0) > 0;
+    }, [message.readerIds]);
+
+    if (message.id === 162)
         console.log(`${message.id}: ${message.text} has rerendered`);
 
     return (
@@ -43,12 +75,12 @@ export const Message = ({
                 <Animated.View
                     style={[{
                         ...styles.container,
-                        alignSelf: message.fromSelf ? "flex-end" : "flex-start",
-                        flexDirection: message.fromSelf ? "row-reverse" : "row",
+                        alignSelf: fromSelf ? "flex-end" : "flex-start",
+                        flexDirection: fromSelf ? "row-reverse" : "row",
                         marginBottom: !hasPrevFromSameSender ? 15 : 1,
                     }, messageReplyAnimatedStyles]}
                 >
-                    {!message.fromSelf ? (
+                    {!fromSelf ? (
                         <View style={styles.dpContainer}>
                             {!hasPrevFromSameSender ? (
                                 <Image
@@ -78,31 +110,31 @@ export const Message = ({
                                 reply_to_message_text: message.reply_to_message_text
                             }}
                                 authUserId={authUserId}
-                                fromSelf={!!message.fromSelf}
+                                fromSelf={!!fromSelf}
                             />
                         }
                         <View
                             style={{
                                 ...styles.messageContainer,
-                                backgroundColor: message.fromSelf
+                                backgroundColor: fromSelf
                                     ? BLUE_COLOR
                                     : LIGHT_GRAY_COLOR,
-                                borderBottomLeftRadius: message.fromSelf
+                                borderBottomLeftRadius: fromSelf
                                     ? 15
                                     : hasPrevFromSameSender
                                         ? 1
                                         : 15,
-                                borderBottomRightRadius: !message.fromSelf
+                                borderBottomRightRadius: !fromSelf
                                     ? 15
                                     : hasPrevFromSameSender
                                         ? 1
                                         : 15,
-                                borderTopLeftRadius: message.fromSelf
+                                borderTopLeftRadius: fromSelf
                                     ? 15
                                     : hasNextFromSameSender
                                         ? 1
                                         : 15,
-                                borderTopRightRadius: !message.fromSelf
+                                borderTopRightRadius: !fromSelf
                                     ? 15
                                     : hasNextFromSameSender
                                         ? 1
@@ -110,13 +142,13 @@ export const Message = ({
                             }}
                         >
                             {!hasNextFromSameSender &&
-                                !message.fromSelf &&
+                                !fromSelf &&
                                 showSenderName ? (
                                 <Text
                                     style={{
                                         ...styles.senderName,
-                                        color: message.fromSelf ? "#ffffff" : "#000000",
-                                        alignSelf: message.fromSelf
+                                        color: fromSelf ? "#ffffff" : "#000000",
+                                        alignSelf: fromSelf
                                             ? "flex-end"
                                             : "flex-start",
                                     }}
@@ -129,19 +161,19 @@ export const Message = ({
                                 <Text
                                     style={{
                                         ...styles.message,
-                                        color: message.fromSelf ? "#ffffff" : "#000000",
+                                        color: fromSelf ? "#ffffff" : "#000000",
                                     }}
                                 >
                                     {message.text}
                                 </Text>
                             </View>
-                            {message.fromSelf ? (
+                            {fromSelf ? (
                                 <Text
                                     style={{
                                         alignSelf: "flex-end",
                                     }}
                                 >
-                                    {message.is_read ? (
+                                    {isRead ? (
                                         <View>
                                             <SeenIcon fill={"#fff"} />
                                         </View>
@@ -158,7 +190,26 @@ export const Message = ({
             </PanGestureHandler>
         </View>
     );
-};
+}, (prev, next) => {
+    if (prev.message.readerIds?.filter(id => id !== null).length !== next.message.readerIds?.filter(id => id !== null).length) {
+        if (prev.message.id === 162)
+            console.log(`${prev.message.id} has rerendered due to readerIds change`);
+        return false;
+    }
+
+    let chatMatesChanged = hasChatMatesChanged(prev.chatMates, next.chatMates);
+
+    if (chatMatesChanged) {
+        if (prev.message.id === 162)
+            console.log(`${prev.message.id} has rerendered due to chatMatesChange`);
+        return false;
+    } else {
+        if (prev.message.id === 162)
+            console.log(`${prev.message.id} has not rerendered due to chatMatesChange not changing`);
+    }
+
+    return true;
+});
 
 const styles = StyleSheet.create({
     container: {
