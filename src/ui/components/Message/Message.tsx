@@ -3,10 +3,10 @@ import { Image } from "react-native";
 import { StyleSheet, Text, View } from "react-native";
 import { PanGestureHandler } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../app/redux/store";
 import { IChatMate } from "../../../app/types/IChatMate";
 import { IMessage } from "../../../app/types/IMessage";
-import { arrayToHash } from "../../../app/utils/arrayToHash";
-import { hasChatMatesChanged } from "../../../app/utils/hasChatMatesChanged";
 import { isMessageUserActive } from "../../../app/utils/isMessageUserActive";
 import { messageHasNextFromSameSender } from "../../../app/utils/messageHasNextFromSameSender";
 import { messageHasPrevFromSameSender } from "../../../app/utils/messageHasPrevFromSameSender";
@@ -23,7 +23,6 @@ interface IProps {
     message: IMessage;
     authUserId: number;
     allMessages: IMessage[];
-    chatMates: IChatMate[];
     isGroup: boolean;
 }
 
@@ -35,7 +34,6 @@ export const Message = memo(({
     message,
     authUserId,
     allMessages,
-    chatMates,
     isGroup,
 }: IProps) => {
     const fromSelf = message.sender_id === authUserId;
@@ -57,8 +55,19 @@ export const Message = memo(({
         )
         , []);
 
-    const isUserOnline = useMemo(() => isMessageUserActive(message.sender_id ?? 0, chatMates, message), [chatMates]);
+    const chatMate = useSelector((state: RootState) => {
+        return !hasPrevFromSameSender ? state.auth.chatMates.filter(chatMate => chatMate.id === message.sender_id)[0] : null;
+    }, (next, prev) => {
+        let statusChanged = next?.onlineStatus?.isOnline !== prev?.onlineStatus?.isOnline;
 
+        if (statusChanged) {
+            return false;
+        }
+
+        return true;
+    });
+
+    const isUserOnline = useMemo(() => chatMate?.onlineStatus?.isOnline, [chatMate?.onlineStatus?.socketIds]);
     const showSenderName = isGroup;
 
     const isRead = useMemo(() => {
@@ -195,17 +204,6 @@ export const Message = memo(({
         if (prev.message.id === 162)
             console.log(`${prev.message.id} has rerendered due to readerIds change`);
         return false;
-    }
-
-    let chatMatesChanged = hasChatMatesChanged(prev.chatMates, next.chatMates);
-
-    if (chatMatesChanged) {
-        if (prev.message.id === 162)
-            console.log(`${prev.message.id} has rerendered due to chatMatesChange`);
-        return false;
-    } else {
-        if (prev.message.id === 162)
-            console.log(`${prev.message.id} has not rerendered due to chatMatesChange not changing`);
     }
 
     return true;

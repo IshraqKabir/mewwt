@@ -15,7 +15,7 @@ interface IProps {
 }
 
 export const Room = ({ roomId, navigation }: IProps) => {
-    const { id, isInvalid, roomSocket, user, chatMates, isGroup } = useInitRoom(roomId);
+    const { id, isInvalid, roomSocket, user, isGroup } = useInitRoom(roomId);
 
     if (isInvalid || !roomSocket || id === 0) {
         return (
@@ -34,7 +34,6 @@ export const Room = ({ roomId, navigation }: IProps) => {
             <Messages
                 roomId={roomId}
                 authUserId={user?.id ?? 0}
-                chatMates={chatMates}
                 isGroup={isGroup}
             />
 
