@@ -13,7 +13,7 @@ export const addMessage = (
             return room;
         }
 
-        const roomMessages = [message, ...room.messages];
+        const roomMessages = [message, ...room.messages.filter(m => m.id !== message.id)];
 
         room.messages = roomMessages;
 

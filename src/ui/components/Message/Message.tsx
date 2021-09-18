@@ -1,5 +1,5 @@
 import React, { memo, useMemo } from "react";
-import { Image } from "react-native";
+import { Image, Pressable } from "react-native";
 import { StyleSheet, Text, View } from "react-native";
 import { PanGestureHandler } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
@@ -18,6 +18,7 @@ interface IProps {
     authUserId: number;
     allMessages: IMessage[];
     isGroup: boolean;
+    handleReplyToClick: (reply_to_message_id: number) => void;
 }
 
 // has prev means down
@@ -29,6 +30,7 @@ export const Message = memo(({
     authUserId,
     allMessages,
     isGroup,
+    handleReplyToClick
 }: IProps) => {
     const {
         fromSelf,
@@ -83,16 +85,19 @@ export const Message = memo(({
                             && message.reply_to_message_text
                             && message.reply_to_message_sender_id
                             &&
-                            <ReplyToMessage replyTo={{
-                                reply_to_message_id: message.reply_to_message_id,
-                                reply_to_message_sender_first_name: message.reply_to_message_sender_first_name ?? "",
-                                reply_to_message_sender_last_name: message.reply_to_message_sender_last_name ?? "",
-                                reply_to_message_sender_id: message.reply_to_message_sender_id,
-                                reply_to_message_text: message.reply_to_message_text
-                            }}
-                                authUserId={authUserId}
-                                fromSelf={!!fromSelf}
-                            />
+                            <Pressable onPress={() => handleReplyToClick(message.reply_to_message_id ?? 0)}>
+                                <ReplyToMessage
+                                    replyTo={{
+                                        reply_to_message_id: message.reply_to_message_id,
+                                        reply_to_message_sender_first_name: message.reply_to_message_sender_first_name ?? "",
+                                        reply_to_message_sender_last_name: message.reply_to_message_sender_last_name ?? "",
+                                        reply_to_message_sender_id: message.reply_to_message_sender_id,
+                                        reply_to_message_text: message.reply_to_message_text
+                                    }}
+                                    authUserId={authUserId}
+                                    fromSelf={!!fromSelf}
+                                />
+                            </Pressable>
                         }
                         <View
                             style={{
@@ -143,6 +148,7 @@ export const Message = memo(({
                                     style={{
                                         ...styles.message,
                                         color: fromSelf ? "#ffffff" : "#000000",
+                                        alignSelf: fromSelf ? "flex-end" : "flex-start"
                                     }}
                                 >
                                     {message.text}

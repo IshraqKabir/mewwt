@@ -9,7 +9,9 @@ import { MainNavigator } from "./navigators/main/MainNavigator";
 
 export const AppNavContainer = () => {
     useInitToken();
-    const { authToken } = useSelector(authSelector);
+    const { authToken } = useSelector(authSelector, (next, prev) => {
+        return next.authToken === prev.authToken;
+    });
     useSetUser(authToken);
 
     return (

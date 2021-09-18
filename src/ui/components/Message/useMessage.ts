@@ -6,7 +6,6 @@ import { messageHasNextFromSameSender } from "../../../app/utils/messageHasNextF
 import { messageHasPrevFromSameSender } from "../../../app/utils/messageHasPrevFromSameSender";
 import { useMessageReply } from "./useMessageReply";
 
-// TODO: implement focus after replyTo gets set
 // TODO: implement press to scroll to replied message
 
 export const useMessage = (

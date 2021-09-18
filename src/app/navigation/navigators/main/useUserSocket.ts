@@ -10,11 +10,16 @@ import {
     userStartedTyping,
     userStoppedTyping,
 } from "../../../redux/chatList/chatListActions";
+import { addMessage } from "../../../redux/rooms/roomsActions";
 import { getToken } from "../../../repository/storage/getToken";
+import { IMessage } from "../../../types/IMessage";
 import { IRoomChip } from "../../../types/IRoomChip";
 
 export const useUserSocket = () => {
-    const { user } = useSelector(authSelector);
+    const { user } = useSelector(authSelector, (next, prev) => {
+        return next.user?.id === prev.user?.id;
+    });
+
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -30,8 +35,9 @@ export const useUserSocket = () => {
             },
         });
 
-        socket.on("message", (roomChip: IRoomChip) => {
+        socket.on("message", ({ roomChip, message }: { roomChip: IRoomChip, message: IMessage; }) => {
             dispatch(newRoomChip(roomChip));
+            dispatch(addMessage(message));
         });
 
         socket.on("message_read", (data: any) => {

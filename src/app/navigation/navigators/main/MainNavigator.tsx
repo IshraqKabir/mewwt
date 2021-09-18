@@ -8,7 +8,6 @@ import { useUnreadMessagesCount } from "../../../customHooks/useUnreadMessagesCo
 import { ChatsNavigator } from "./ChatsNavigator";
 import { useUserSocket } from "./useUserSocket";
 import { useChatMatesOnlineStatuses } from "../../../customHooks/useChatMatesOnlineStatuses";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const MainStack = createStackNavigator();
 
@@ -17,11 +16,10 @@ export const MainNavigator = () => {
     useUnreadMessagesCount();
     useChatMatesOnlineStatuses();
 
+    console.log("main navigator render");
+
     return (
         <>
-            {/* <Text style={{ backgroundColor: "white", color: "black" }}>
-                isConnected : {isConnected ? "true" : "false"}
-            </Text> */}
             <MainStack.Navigator
                 initialRouteName="chats_tabs"
                 screenOptions={{

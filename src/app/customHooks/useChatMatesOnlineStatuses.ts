@@ -6,7 +6,10 @@ import { IChatMate } from "../types/IChatMate";
 import { pluck } from "../utils/pluck";
 
 export const useChatMatesOnlineStatuses = () => {
-    const { chatMates } = useSelector(authSelector);
+    const { chatMates } = useSelector(authSelector, (next, prev) => {
+        return next.chatMates?.length === prev.chatMates?.length;
+    });
+
     const dispatch = useDispatch();
 
     useEffect(() => {

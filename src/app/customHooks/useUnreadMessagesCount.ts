@@ -6,8 +6,18 @@ import { setUnreadMessagesCount } from "../redux/rooms/roomsActions";
 import { getIsRoomChipRead } from "../utils/getIsRoomChipRead";
 
 export const useUnreadMessagesCount = () => {
-    const { user } = useSelector(authSelector);
-    const { roomChips } = useSelector(chatListSelector);
+    const { user } = useSelector(authSelector, (next, prev) => {
+        if (next.user?.id !== prev.user?.id) {
+            return false;
+        }
+
+        return true;
+    });
+
+    const { roomChips } = useSelector(chatListSelector, (next, prev) => {
+        return prev.roomChips.length !== 0;
+    });
+
     const dispatch = useDispatch();
 
     useEffect(() => {

@@ -40,5 +40,6 @@ export const RoomPresenceList = ({ roomId }: IProps) => {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: BACKGROUND_COLOR,
+        maxHeight: 200,
     },
 });

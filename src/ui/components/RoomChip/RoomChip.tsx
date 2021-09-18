@@ -81,10 +81,12 @@ export const RoomChip = ({
                         </Text>
                         : null}
 
-                    <Text style={{ color: typingUsers.length > 0 ? "green" : messageColor, fontWeight: messageFont }}>
-                        {`${message.slice(0, 20)}${message.length > 20 ? "..." : ""
-                            }`}
-                    </Text>
+                    {message &&
+                        <Text style={{ color: typingUsers.length > 0 ? "green" : messageColor, fontWeight: messageFont }}>
+                            {`${message?.slice(0, 20)}${message?.length > 20 ? "..." : ""
+                                }`}
+                        </Text>
+                    }
                     {roomChip.message_created_at && `  .  ${time}`}
                 </Text>
             </View>
