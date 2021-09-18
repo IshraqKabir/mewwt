@@ -6,8 +6,6 @@ import { messageHasNextFromSameSender } from "../../../app/utils/messageHasNextF
 import { messageHasPrevFromSameSender } from "../../../app/utils/messageHasPrevFromSameSender";
 import { useMessageReply } from "./useMessageReply";
 
-// TODO: fix bug of not updating isRead
-
 export const useMessage = (
     index: number,
     message: IMessage,
@@ -46,13 +44,24 @@ export const useMessage = (
         return true;
     });
 
+    const { readerIds } = useSelector((state: RootState) => {
+        return state.rooms.rooms.find(room => room.id === message.room_id)
+            ?.messages?.find(m => m.id === message.id) ?? message;
+    }, (next, prev) => {
+        if (next.readerIds?.filter(id => id !== null)?.length !== prev.readerIds?.filter(id => id !== null)?.length) {
+            return false;
+        }
+
+        return true;
+    });
+
     const isUserOnline = useMemo(() => chatMate?.onlineStatus?.isOnline, [chatMate?.onlineStatus?.socketIds]);
     const showSenderName = isGroup;
 
     const isRead = useMemo(() => {
-        return (message.readerIds?.filter((id) => id !== null)
+        return (readerIds?.filter((id) => id !== null && id !== authUserId)
             .length || 0) > 0;
-    }, [message.readerIds]);
+    }, [readerIds]);
 
     return {
         gestureHandler,
