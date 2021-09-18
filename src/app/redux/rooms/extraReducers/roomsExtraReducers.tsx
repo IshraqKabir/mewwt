@@ -1,4 +1,6 @@
 import { ActionReducerMapBuilder } from "@reduxjs/toolkit";
+import { IMessage } from "../../../types/IMessage";
+import { arrayToHash } from "../../../utils/arrayToHash";
 import { addMessage } from "../reducers/addMessage";
 import { getRoomDetailsThunk } from "../thunks/getRoomDetailsThunk";
 import { getRoomMessagesThunk } from "../thunks/getRoomMessagesThunk";
@@ -16,14 +18,24 @@ export const roomsExtraReducers = (
             }
 
             state.rooms = state.rooms.map((room) => {
-                if (room.id == payload.id) {
-                    return {
-                        ...room,
-                        ...payload,
-                    };
+                if (room.id !== payload.id) {
+                    return room;
                 }
 
-                return room;
+                const prevMessages = room.messages ? [...room.messages] : [];
+                let newMessages = payload.messages ? [...payload.messages] : [];
+
+                const prevMessagesHash = arrayToHash<IMessage>(prevMessages, "id");
+
+                newMessages = newMessages.filter(message => {
+                    return !prevMessagesHash[`${message.id ?? 0}`];
+                });
+
+                return {
+                    ...room,
+                    ...payload,
+                    messages: [...newMessages, ...prevMessages]
+                };
             });
         }
     );
@@ -69,9 +81,17 @@ export const roomsExtraReducers = (
             state.rooms = state.rooms.map((room) => {
                 if (room.id !== roomId) return room;
 
+                const prevMessages = room.messages ? [...room.messages] : [];
+                let newMessages = messages ? [...messages] : [];
+                const prevMessagesHash = arrayToHash<IMessage>(prevMessages, "id");
+
+                newMessages = newMessages.filter(message => {
+                    return !prevMessagesHash[`${message.id ?? 0}`];
+                });
+
                 return {
                     ...room,
-                    messages: [...room.messages, ...messages],
+                    messages: [...prevMessages, ...newMessages],
                     isFetchingNewMessages: false,
                 };
             });

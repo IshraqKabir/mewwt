@@ -27,6 +27,8 @@ export const useInitRoom = (roomId: number) => {
     const {
         id,
         is_group,
+        messages,
+        name
     } = useSelector((state: RootState) => {
         return singleRoomSelector(state, roomId);
     }, (next: IRoom, prev: IRoom) => {
@@ -107,8 +109,10 @@ export const useInitRoom = (roomId: number) => {
     }, []);
 
     useEffect(() => {
-        dispatch(initRoom(roomId));
-        dispatch(getRoomDetailsThunk(roomId));
+        if (!name) {
+            dispatch(initRoom(roomId));
+            dispatch(getRoomDetailsThunk(roomId));
+        }
     }, []);
 
     return {

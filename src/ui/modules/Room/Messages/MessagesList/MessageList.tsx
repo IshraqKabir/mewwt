@@ -1,9 +1,8 @@
-import React, { memo, useEffect } from "react";
-import { FlatList, Text, View } from "react-native";
+import React, { memo } from "react";
+import { FlatList } from "react-native-gesture-handler";
 import { useDispatch } from "react-redux";
 import { incrementPage } from "../../../../../app/redux/rooms/roomsActions";
 import { IMessage } from "../../../../../app/types/IMessage";
-import { hasChatMatesChanged } from "../../../../../app/utils/hasChatMatesChanged";
 import { Message } from "../../../../components/Message/Message";
 
 interface IProps {

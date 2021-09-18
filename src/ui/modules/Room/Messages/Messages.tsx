@@ -12,8 +12,6 @@ interface IProps {
     isGroup: boolean;
 }
 
-// TODO: fix bug of not paginating after re-entering room
-
 export const Messages = ({ roomId, authUserId, isGroup }: IProps) => {
     const { messages, isFetchingNewMessages } = useSelector((state: RootState) => {
         return state.rooms.rooms.filter(room => room.id === roomId)[0];

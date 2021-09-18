@@ -173,7 +173,7 @@ export const Message = memo(({
                                         color: fromSelf ? "#ffffff" : "#000000",
                                     }}
                                 >
-                                    {message.text}
+                                    {message.id}.{message.text}
                                 </Text>
                             </View>
                             {fromSelf ? (
