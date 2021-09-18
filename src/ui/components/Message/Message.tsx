@@ -200,7 +200,7 @@ export const Message = memo(({
         </View>
     );
 }, (prev, next) => {
-    if (prev.message.readerIds?.filter(id => id !== null).length !== next.message.readerIds?.filter(id => id !== null).length) {
+    if (prev.message.readerIds?.filter((id: number | null) => id !== null).length !== next.message.readerIds?.filter(id => id !== null).length) {
         if (prev.message.id === 162)
             console.log(`${prev.message.id} has rerendered due to readerIds change`);
         return false;
