@@ -19,7 +19,6 @@ import { getToken } from "../../../app/repository/storage/getToken";
 import { IMessage } from "../../../app/types/IMessage";
 import { IRoom } from "../../../app/types/IRoom";
 import { IRoomPresence } from "../../../app/types/IRoomPresence";
-import { hasChatMatesChanged } from "../../../app/utils/hasChatMatesChanged";
 
 export const useInitRoom = (roomId: number) => {
     const { user, } = useSelector(authSelector, () => true);

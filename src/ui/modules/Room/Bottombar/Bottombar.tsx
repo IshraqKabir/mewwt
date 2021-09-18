@@ -1,6 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
+import { StyleSheet, TextInput, View } from "react-native";
 import { useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 import { singleRoomSelector } from "../../../../app/redux/rooms/selectors/singleRoomSelector";
@@ -18,9 +17,15 @@ interface IProps {
 export const Bottombar = ({ roomId, roomSocket }: IProps) => {
     const { replyTo, users } = useSelector((state: RootState) => {
         return singleRoomSelector(state, roomId);
+    }, (next, prev) => {
+        if (next.replyTo?.reply_to_message_id !== prev.replyTo?.reply_to_message_id) {
+            return false;
+        }
+
+        return true;
     });
 
-    const { text, handleSend, handleTextChange } = useSendMessage(roomId, roomSocket, users ?? [], replyTo);
+    const { text, handleSend, handleTextChange, textInputRef } = useSendMessage(roomId, roomSocket, users ?? [], replyTo);
 
     return (
         <>
@@ -37,6 +42,12 @@ export const Bottombar = ({ roomId, roomSocket }: IProps) => {
                         placeholderTextColor={GRAY_COLOR}
                         selectionColor={BLUE_COLOR}
                         multiline={true}
+                        focusable={false}
+                        ref={(item) => {
+                            if (item) {
+                                textInputRef.current = item;
+                            }
+                        }}
                     />
                 </View>
                 <View style={styles.sendIconContainer}>

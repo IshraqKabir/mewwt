@@ -1,3 +1,5 @@
+import { useEffect, useRef } from "react";
+import { TextInput } from "react-native";
 import { useDispatch } from "react-redux";
 import { Socket } from "socket.io-client";
 import { useDebounce } from "../../../../app/customHooks/useDebounce";
@@ -16,6 +18,16 @@ export const useSendMessage = (roomId: number, roomSocket: Socket | null, roomUs
     }, 500);
 
     const dispatch = useDispatch();
+
+    const textInputRef = useRef<TextInput>();
+
+    useEffect(() => {
+        if (textInputRef.current && !!replyTo) {
+            textInputRef.current.focus();
+        } else if (textInputRef.current && !replyTo) {
+            textInputRef.current.blur();
+        }
+    }, [replyTo]);
 
     const handleSend = async () => {
         dispatch(sendMessageThunk({
@@ -43,6 +55,7 @@ export const useSendMessage = (roomId: number, roomSocket: Socket | null, roomUs
         text,
         handleSend,
         handleTextChange,
+        textInputRef
     };
 };
 

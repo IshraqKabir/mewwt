@@ -3,19 +3,12 @@ import { Image } from "react-native";
 import { StyleSheet, Text, View } from "react-native";
 import { PanGestureHandler } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../app/redux/store";
-import { IChatMate } from "../../../app/types/IChatMate";
 import { IMessage } from "../../../app/types/IMessage";
-import { isMessageUserActive } from "../../../app/utils/isMessageUserActive";
-import { messageHasNextFromSameSender } from "../../../app/utils/messageHasNextFromSameSender";
-import { messageHasPrevFromSameSender } from "../../../app/utils/messageHasPrevFromSameSender";
 import { SeenIcon } from "../../../assets/icons/SeenIcon/SeenIcon";
 import { SentIcon } from "../../../assets/icons/SentIcon/SentIcon";
 import { BLUE_COLOR, DP_WIDTH, LIGHT_GRAY_COLOR } from "../../../consts";
 import { ReplyToMessage } from "../ReplyToMessage/ReplyToMessage";
 import { useMessage } from "./useMessage";
-import { useMessageReply } from "./useMessageReply";
 
 const DP = require("../../../assets/images/default_dp.jpg");
 
