@@ -6,7 +6,7 @@ import { combinedReducers } from "./combinedReducers";
 export const store = configureStore({
     reducer: combinedReducers,
     middleware: (getDefaultMiddleware) => {
-        return getDefaultMiddleware().concat(thunk);
+        return getDefaultMiddleware({ serializableCheck: false }).concat(thunk);
     },
 });
 

@@ -1,10 +1,8 @@
-import React, { memo, useRef } from "react";
+import React, { memo } from "react";
 import { FlatList } from "react-native-gesture-handler";
-import { useDispatch } from "react-redux";
-import { incrementPage } from "../../../../../app/redux/rooms/roomsActions";
 import { IMessage } from "../../../../../app/types/IMessage";
 import { Message } from "../../../../components/Message/Message";
-import { useScrollToReply } from "./useScrollToReply";
+import { useMessageFlatList } from "./useMessageFlatList";
 
 interface IProps {
     messages: IMessage[];
@@ -15,15 +13,14 @@ interface IProps {
 }
 
 export const MessageList = memo(({ messages, roomId, authUserId, isGroup }: IProps) => {
-    const dispatch = useDispatch();
-
-    const { flatListRef, handleReplyToClick } = useScrollToReply(messages);
-
-    const keyExtractor = (message: any) => message.id;
-
-    const handlePagination = () => {
-        dispatch(incrementPage({ roomId: roomId }));
-    };
+    const {
+        handlePagination,
+        handleReplyToClick,
+        keyExtractor,
+        onScrollToIndexFailed,
+        setRef,
+        onViewableItemsChanged,
+    } = useMessageFlatList(roomId, messages);
 
     const renderItem = ({ item: message, index }: { item: any, index: number; }) => (
         <Message
@@ -44,9 +41,10 @@ export const MessageList = memo(({ messages, roomId, authUserId, isGroup }: IPro
         inverted={true}
         onEndReached={handlePagination}
         onEndReachedThreshold={1}
-        ref={(item) => {
-            flatListRef.current = item;
-        }}
+        ref={setRef}
+        maxToRenderPerBatch={50}
+        onScrollToIndexFailed={onScrollToIndexFailed}
+        onViewableItemsChanged={onViewableItemsChanged}
     />;
 }, (prev, next) => {
     if (prev.messages.length !== next.messages.length) {

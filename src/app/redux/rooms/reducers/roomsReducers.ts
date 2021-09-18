@@ -3,6 +3,7 @@ import { incrementPage } from "./incrementPage";
 import { initRoom } from "./initRoom";
 import { readMessages } from "./readMessages";
 import { setReplyTo } from "./setReplyTo";
+import { setShouldScrollToMessageId } from "./setShouldScrollToMessageId";
 import { setUnreadMessagesCount } from "./setUnreadMessagesCount";
 import { userJoined } from "./userJoined";
 import { userLeft } from "./userLeft";
@@ -20,4 +21,5 @@ export const roomsReducers = {
     userStartedTyping: userStartedTyping,
     userStoppedTyping: userStoppedTyping,
     setReplyTo: setReplyTo,
+    setShouldScrollToMessageId: setShouldScrollToMessageId,
 };

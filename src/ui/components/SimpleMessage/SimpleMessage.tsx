@@ -7,9 +7,6 @@ interface IProps {
 }
 
 export const SimpleMessage = memo(({ message }: IProps) => {
-    if (message.id === 160)
-        console.log(`${message.id} message rendered`);
-
     return <View style={{ padding: 25 }}>
         <Text style={{ color: "black" }}>{message.id}</Text>
     </View>;

@@ -14,4 +14,5 @@ export interface IRoom {
     isFetchingNewMessages?: boolean;
     roomPresences: IRoomPresence[];
     replyTo?: IReplyTo;
+    shouldScrollToMessageId?: number;
 }

@@ -49,9 +49,6 @@ export const Message = memo(({
         isGroup
     );
 
-    if (message.id === 162)
-        console.log(`${message.id}: ${message.text} has rerendered`);
-
     return (
         <View>
             <PanGestureHandler onGestureEvent={gestureHandler}>
@@ -178,11 +175,10 @@ export const Message = memo(({
         </View>
     );
 }, (prev, next) => {
-    if (prev.message.readerIds?.filter((id: number | null) => id !== null).length !== next.message.readerIds?.filter(id => id !== null).length) {
-        if (prev.message.id === 162)
-            console.log(`${prev.message.id} has rerendered due to readerIds change`);
-        return false;
-    }
+    // if the message is not from self then no need to update isRead
+    if (next.message.sender_id !== next.authUserId) return true;
+
+    if (prev.message.readerIds?.filter((id: number | null) => id !== null).length !== next.message.readerIds?.filter(id => id !== null).length) return false;
 
     return true;
 });

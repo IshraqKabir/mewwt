@@ -11,4 +11,5 @@ export const {
     userStartedTyping,
     userStoppedTyping,
     setReplyTo,
+    setShouldScrollToMessageId,
 } = roomsSlice.actions;

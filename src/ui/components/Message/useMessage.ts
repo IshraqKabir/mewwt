@@ -6,6 +6,7 @@ import { messageHasNextFromSameSender } from "../../../app/utils/messageHasNextF
 import { messageHasPrevFromSameSender } from "../../../app/utils/messageHasPrevFromSameSender";
 import { useMessageReply } from "./useMessageReply";
 
+// TODO: handle manual scrolling when indexes are too for
 // TODO: implement press to scroll to replied message
 
 export const useMessage = (

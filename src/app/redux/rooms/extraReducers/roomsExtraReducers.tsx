@@ -1,9 +1,11 @@
 import { ActionReducerMapBuilder } from "@reduxjs/toolkit";
 import { IMessage } from "../../../types/IMessage";
 import { arrayToHash } from "../../../utils/arrayToHash";
+import { pluck } from "../../../utils/pluck";
 import { addMessage } from "../reducers/addMessage";
 import { getRoomDetailsThunk } from "../thunks/getRoomDetailsThunk";
 import { getRoomMessagesThunk } from "../thunks/getRoomMessagesThunk";
+import { getRoomMessagesWithRangeThunk } from "../thunks/getRoomMessagesWithRangeThunk";
 import { sendMessageThunk } from "../thunks/sendMessageThunk";
 import { IRoomsState } from "../types";
 
@@ -97,4 +99,45 @@ export const roomsExtraReducers = (
             });
         }
     );
+
+    builder.addCase(getRoomMessagesWithRangeThunk.pending, (state, { meta: { arg: { roomId } } }) => {
+        state.rooms = state.rooms.map(room => {
+            if (room.id !== roomId) {
+                return room;
+            }
+
+            return {
+                ...room,
+                isFetchingNewMessages: true,
+            };
+        });
+    });
+
+    builder.addCase(getRoomMessagesWithRangeThunk.fulfilled, (state: IRoomsState, { meta: { arg: { roomId, start, end } }, payload: messages }) => {
+        state.rooms = state.rooms.map(room => {
+            if (room.id !== roomId) {
+                return room;
+            }
+
+            const prevMessages = room.messages ? [...room.messages] : [];
+            let newMessages = messages ? [...messages] : [];
+
+            const prevMessagesHash = arrayToHash<IMessage>(prevMessages, "id");
+
+            newMessages = newMessages.filter(message => {
+                return !prevMessagesHash[`${message.id}`];
+            });
+
+            const allMessages = [...prevMessages, ...newMessages];
+
+            const pageNumber = Math.ceil((allMessages.length ?? 0) / 20);
+
+            return {
+                ...room,
+                isFetchingNewMessages: false,
+                messagesPageNumber: pageNumber,
+                messages: allMessages,
+            };
+        });
+    });
 };

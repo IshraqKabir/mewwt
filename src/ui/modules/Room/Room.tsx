@@ -1,9 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { NavigationProp } from '@react-navigation/core';
 import { Text } from 'react-native';
 import { StyleSheet, View } from 'react-native';
 import { Bottombar } from './Bottombar/Bottombar';
-import { MessageListOld } from './MessageListOld/MessageListOld';
 import { RoomTopbar } from './RoomTopbar/RoomTopbar';
 import { useInitRoom } from './useInitRoom';
 import { RoomPresenceList } from './RoomPresenceList/RoomPresenceList';
@@ -15,9 +14,9 @@ interface IProps {
 }
 
 export const Room = ({ roomId, navigation }: IProps) => {
-    const { id, isInvalid, roomSocket, user, isGroup } = useInitRoom(roomId);
+    const { isInvalid, roomSocket, user, isGroup } = useInitRoom(roomId);
 
-    if (isInvalid || !roomSocket || id === 0) {
+    if (isInvalid) {
         return (
             <View style={styles.container}>
                 <Text>Waiting...</Text>

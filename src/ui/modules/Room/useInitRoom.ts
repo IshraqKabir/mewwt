@@ -54,8 +54,6 @@ export const useInitRoom = (roomId: number) => {
         setRoomSocket(socket);
 
         socket.on("message", (message: IMessage) => {
-            console.log(message);
-
             if (message.sender_id === user?.id) return;
 
             dispatch(addMessage(message));
@@ -111,7 +109,6 @@ export const useInitRoom = (roomId: number) => {
     }, []);
 
     return {
-        id,
         isInvalid: id === 0,
         roomSocket,
         user,

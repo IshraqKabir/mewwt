@@ -16,8 +16,6 @@ export const MainNavigator = () => {
     useUnreadMessagesCount();
     useChatMatesOnlineStatuses();
 
-    console.log("main navigator render");
-
     return (
         <>
             <MainStack.Navigator

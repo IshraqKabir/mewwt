@@ -7,10 +7,6 @@ export const isMessageUserActive = (
     chatUsers: IChatMate[],
     message?: IMessage
 ): boolean => {
-    if (message?.id === 162) {
-        console.log(`${message.id} called isMessageUserActive`);
-    }
-
     let isActive = false;
 
     const chatMatesHash = arrayToHash<IChatMate>(chatUsers, "id");

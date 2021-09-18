@@ -21,13 +21,17 @@ export const useSendMessage = (roomId: number, roomSocket: Socket | null, roomUs
 
     const textInputRef = useRef<TextInput>();
 
-    useEffect(() => {
-        if (textInputRef.current && !!replyTo) {
-            textInputRef.current.focus();
-        } else if (textInputRef.current && !replyTo) {
-            textInputRef.current.blur();
-        }
-    }, [replyTo]);
+    // kinda makes the user experience worse
+    // is a bit laggy
+    // useEffect(() => {
+    //     setTimeout(() => {
+    //         if (textInputRef.current && !!replyTo) {
+    //             textInputRef.current.focus();
+    //         } else if (textInputRef.current && !replyTo) {
+    //             textInputRef.current.blur();
+    //         }
+    //     }, 500);
+    // }, [replyTo]);
 
     const handleSend = async () => {
         dispatch(sendMessageThunk({
