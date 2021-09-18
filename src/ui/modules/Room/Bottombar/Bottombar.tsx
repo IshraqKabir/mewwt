@@ -5,11 +5,10 @@ import { useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 import { singleRoomSelector } from "../../../../app/redux/rooms/selectors/singleRoomSelector";
 import { RootState } from "../../../../app/redux/store";
-import { IUser } from "../../../../app/types/IUser";
 import { BACKGROUND_COLOR, BLUE_COLOR, GRAY_COLOR } from "../../../../consts";
 import { ReplyToInput } from "../../../components/ReplyToInput/ReplyToInput";
 import { SendIcon } from "./SendIcon/SendIcon";
-import { useMessage } from "./useMessage";
+import { useSendMessage } from "./useSendMessage";
 
 interface IProps {
     roomId: number;
@@ -21,7 +20,7 @@ export const Bottombar = ({ roomId, roomSocket }: IProps) => {
         return singleRoomSelector(state, roomId);
     });
 
-    const { text, handleSend, handleTextChange } = useMessage(roomId, roomSocket, users ?? [], replyTo);
+    const { text, handleSend, handleTextChange } = useSendMessage(roomId, roomSocket, users ?? [], replyTo);
 
     return (
         <>

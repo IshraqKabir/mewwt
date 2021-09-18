@@ -6,6 +6,8 @@ import { messageHasNextFromSameSender } from "../../../app/utils/messageHasNextF
 import { messageHasPrevFromSameSender } from "../../../app/utils/messageHasPrevFromSameSender";
 import { useMessageReply } from "./useMessageReply";
 
+// TODO: fix bug of not updating isRead
+
 export const useMessage = (
     index: number,
     message: IMessage,

@@ -14,6 +14,7 @@ import { SeenIcon } from "../../../assets/icons/SeenIcon/SeenIcon";
 import { SentIcon } from "../../../assets/icons/SentIcon/SentIcon";
 import { BLUE_COLOR, DP_WIDTH, LIGHT_GRAY_COLOR } from "../../../consts";
 import { ReplyToMessage } from "../ReplyToMessage/ReplyToMessage";
+import { useMessage } from "./useMessage";
 import { useMessageReply } from "./useMessageReply";
 
 const DP = require("../../../assets/images/default_dp.jpg");
@@ -36,44 +37,22 @@ export const Message = memo(({
     allMessages,
     isGroup,
 }: IProps) => {
-    const fromSelf = message.sender_id === authUserId;
-
-    const { animatedStyles: messageReplyAnimatedStyles, gestureHandler } = useMessageReply(message, fromSelf);
-
-    const hasPrevFromSameSender = useMemo(() => index === 0
-        ? false
-        : messageHasPrevFromSameSender(
-            message,
-            allMessages[index - 1]
-        ), []);
-
-    const hasNextFromSameSender = useMemo(() => index === allMessages.length - 1
-        ? false
-        : messageHasNextFromSameSender(
-            message,
-            allMessages[index + 1]
-        )
-        , []);
-
-    const chatMate = useSelector((state: RootState) => {
-        return !hasPrevFromSameSender ? state.auth.chatMates.filter(chatMate => chatMate.id === message.sender_id)[0] : null;
-    }, (next, prev) => {
-        let statusChanged = next?.onlineStatus?.isOnline !== prev?.onlineStatus?.isOnline;
-
-        if (statusChanged) {
-            return false;
-        }
-
-        return true;
-    });
-
-    const isUserOnline = useMemo(() => chatMate?.onlineStatus?.isOnline, [chatMate?.onlineStatus?.socketIds]);
-    const showSenderName = isGroup;
-
-    const isRead = useMemo(() => {
-        return (message.readerIds?.filter((id) => id !== null)
-            .length || 0) > 0;
-    }, [message.readerIds]);
+    const {
+        fromSelf,
+        gestureHandler,
+        hasNextFromSameSender,
+        hasPrevFromSameSender,
+        isRead,
+        isUserOnline,
+        messageReplyAnimatedStyles,
+        showSenderName
+    } = useMessage(
+        index,
+        message,
+        authUserId,
+        allMessages,
+        isGroup
+    );
 
     if (message.id === 162)
         console.log(`${message.id}: ${message.text} has rerendered`);
@@ -156,14 +135,14 @@ export const Message = memo(({
                                 <Text
                                     style={{
                                         ...styles.senderName,
-                                        color: fromSelf ? "#ffffff" : "#000000",
+                                        color: "#000000",
                                         alignSelf: fromSelf
                                             ? "flex-end"
                                             : "flex-start",
                                     }}
                                 >
-                                    {message.sender?.first_name}{" "}
-                                    {message.sender?.last_name}
+                                    {message.sender_first_name}{" "}
+                                    {message.sender_last_name}
                                 </Text>
                             ) : null}
                             <View>
@@ -173,7 +152,7 @@ export const Message = memo(({
                                         color: fromSelf ? "#ffffff" : "#000000",
                                     }}
                                 >
-                                    {message.id}.{message.text}
+                                    {message.text}
                                 </Text>
                             </View>
                             {fromSelf ? (
